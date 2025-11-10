@@ -8,3 +8,7 @@ Backend/orphancare_proj/db.sqlite3
 Backend/__pycache__
 Backend/*/__pycache__
 Backend/*/*/__pycache__
+
+Backend/migrations
+Backend/*/migrations
+Backend/*/*/migrations
