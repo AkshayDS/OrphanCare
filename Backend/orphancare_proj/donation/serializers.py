@@ -1,0 +1,15 @@
+from rest_framework import serializers
+from .models import Donation
+
+class DonationSerializer(serializers.ModelSerializer):
+    donor_name = serializers.CharField(source="donor.full_name", read_only=True)
+    orphanage_name = serializers.CharField(source="orphanage.orphanage_name", read_only=True)
+
+    class Meta:
+        model = Donation
+        fields = [
+            "id", "donor", "donor_name", "orphanage", "orphanage_name",
+            "item_name", "description", "quantity", "status",
+            "donation_date", "proof_image"
+        ]
+        read_only_fields = ["donation_date"]
