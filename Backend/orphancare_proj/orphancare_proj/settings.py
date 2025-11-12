@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'orphancare_proj.wsgi.application'
 
 if not DEBUG:
     DATABASES ={
-    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    "default": dj_database_url.parse(os.environ.get("postgresql://db_0_fayq_user:xckKCY625oAC3RGUaFTubK2VdYdjD16i@dpg-d4adf2ur433s73eibmjg-a.singapore-postgres.render.com/db_0_fayq"))
 }
 
 
