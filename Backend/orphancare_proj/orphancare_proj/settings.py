@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-#ppx0@c1q6-esy^i-=ht8s350o6(xy^^kh)$i7tknroc)*ll3+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == "True"
 
-ALLOWED_HOSTS = ['orphancare-backend.onrender.com','127.0.0.1']
+ALLOWED_HOSTS = ['orphancare-backend.onrender.com','127.0.0.1', 'localhost']
 
 
 # Application definition

@@ -4,6 +4,7 @@ from orphanage.models import OrphanageProfile
 class OrphanageRequirement(models.Model):
     CATEGORY_CHOICES = [
         ("food", "Food"),
+        ("groceries", "Groceries"),
         ("clothing", "Clothing"),
         ("education", "Education"),
         ("medical", "Medical"),

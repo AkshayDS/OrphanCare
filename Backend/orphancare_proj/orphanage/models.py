@@ -32,4 +32,4 @@ class OrphanageProfile(models.Model):
     banner_image = models.ImageField(upload_to="orphanage_banners/", blank=True, null=True)
 
     def __str__(self):
-        return self.orphanage_name
+        return f"{self.orphanage_name} - {self.id}"
