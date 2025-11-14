@@ -686,3 +686,179 @@
     transform: translateY(0);
   }
 }
+
+
+.requirementsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.categoryAddButton {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: var(--primary-maroon);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+}
+
+.categoryAddButton:hover {
+  background: #6a0e0f;
+}
+
+.categoryDivider {
+  margin: 25px 0;
+  border: 0;
+  border-top: 1px dashed #ccc;
+}
+/* ---------------------------------
+   COLLAPSIBLE CATEGORY SECTION
+---------------------------------- */
+
+.needGroup {
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.categoryHeader {
+  background: #f7f2ef;
+  padding: 14px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.categoryHeader:hover {
+  background: #ecdcd6;
+  transform: scale(1.02);
+}
+
+.categoryHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #5a2b28;
+}
+
+.collapseIcon {
+  font-size: 1.4rem;
+  color: #5a2b28;
+  transition: transform 0.2s ease;
+}
+
+/* BODY OF COLLAPSIBLE SECTION */
+.collapseBody {
+  overflow: hidden;
+  padding-left: 10px;
+}
+
+/* REQUIREMENT ITEM CARDS */
+.requirementsList {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.requirementCard {
+  background: #fff;
+  border: 1px solid #e8d8d4;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.requirementCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.10);
+}
+
+.reqName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #43211d;
+}
+
+.reqQty {
+  font-size: 0.9rem;
+  color: #6b4a45;
+}
+
+.reqDesc {
+  font-size: 0.85rem;
+  color: #8a6a65;
+  padding-top: 4px;
+  border-top: 1px dashed #d6c2bc;
+}
+
+/* ADD BUTTON INSIDE COLLAPSE */
+.categoryAddButton {
+  margin-top: 10px;
+  background: #7b2d2d;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.categoryAddButton:hover {
+  background: #5d1f1f;
+}
+
+.categoryDivider {
+  border: none;
+  border-top: 1px solid #e5d4cf;
+  margin: 20px 0;
+}
+
+/* =============================
+   LOADING SCREEN
+============================= */
+.loadingScreen {
+  width: 100%;
+  text-align: center;
+  padding: 100px 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #6b4a45;
+}
+
+/* =============================
+   GENERAL LAYOUT
+============================= */
+.needsSection {
+  padding: 30px 0;
+}
+
+.sectionTitle {
+  font-size: 1.6rem;
+  color: #5d2b2b;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.container {
+  width: 95%;
+  max-width: 900px;
+  margin: auto;
+}

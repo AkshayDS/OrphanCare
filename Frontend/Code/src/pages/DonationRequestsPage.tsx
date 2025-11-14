@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { Check, X, ChevronDown, ChevronUp, User, Mail, Phone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, X, ChevronDown, ChevronUp, User, Mail, Phone, Plus } from 'lucide-react';
 import Header from '../components/Header';
 import styles from '../styles/DonationRequestsPage.module.css';
+import { 
+  getMyDonationRequests, 
+  approveDonation, 
+  rejectDonation ,
+  updateDonationStatus
+} from "../utils/donation_service";
 
 interface DonationRequest {
   id: string;
-  donorName: string;
+  donor_name: string;
   category: string;
   status: 'pending' | 'completed';
   phone: string;
@@ -16,54 +22,54 @@ interface DonationRequest {
 const DonationRequestsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'requests' | 'completed'>('requests');
   const [expandedRequest, setExpandedRequest] = useState<string | null>(null);
+  const [requests, setRequests] = useState<DonationRequest[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const mockRequests: DonationRequest[] = [
-    {
-      id: '1',
-      donorName: 'Akshay D S',
-      category: 'Groceries',
-      status: 'pending',
-      phone: '+91 9876543210',
-      email: 'akshay@email.com',
-      items: ['Rice - 10kg', 'Oil - 2 liters', 'Dal - 5kg']
-    },
-    {
-      id: '2',
-      donorName: 'Priya Sharma',
-      category: 'Books',
-      status: 'pending',
-      phone: '+91 8765432109',
-      email: 'priya@email.com',
-      items: ['Science Books - 20 units', 'Story Books - 15 units']
-    },
-    {
-      id: '3',
-      donorName: 'Rahul Kumar',
-      category: 'Bedding',
-      status: 'completed',
-      phone: '+91 7654321098',
-      email: 'rahul@email.com',
-      items: ['Pillows - 10 units', 'Bedsheets - 15 units']
+  // 🔹 Fetch API data on mount
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    const res = await getMyDonationRequests();
+
+    console.log("--------------------->",res)
+    if (res.success && Array.isArray(res.data)) {
+      setRequests(res.data);
     }
-  ];
-
-  const pendingRequests = mockRequests.filter(req => req.status === 'pending');
-  const completedRequests = mockRequests.filter(req => req.status === 'completed');
-
-  const handleApprove = (id: string) => {
-    alert(`Request ${id} approved!`);
+    setLoading(false);
   };
 
-  const handleReject = (id: string) => {
-    alert(`Request ${id} rejected!`);
-  };
+  const pendingRequests = requests.filter(r => r.status === "pending");
+  const completedRequests = requests.filter(r => r.status === "completed");
+
+const handleApprove = async (id: string) => {
+  const res = await updateDonationStatus(id, "accepted");
+
+  if (res.success) {
+    fetchRequests();
+  } else {
+    alert("Failed to approve request");
+  }
+};
+
+const handleReject = async (id: string) => {
+  const res = await updateDonationStatus(id, "cancelled");
+
+  if (res.success) {
+    fetchRequests();
+  } else {
+    alert("Failed to reject request");
+  }
+};
 
   const toggleExpand = (id: string) => {
     setExpandedRequest(expandedRequest === id ? null : id);
   };
 
-  const renderRequests = (requests: DonationRequest[]) => {
-    return requests.map((request) => (
+  const renderRequests = (list: DonationRequest[]) => {
+    return list.map((request) => (
       <div key={request.id} className={styles.requestCard}>
         <div className={styles.requestHeader} onClick={() => toggleExpand(request.id)}>
           <div className={styles.requestInfo}>
@@ -71,46 +77,48 @@ const DonationRequestsPage: React.FC = () => {
               <User size={24} />
             </div>
             <div className={styles.requestDetails}>
-              <h4>{request.donorName}</h4>
-              <span className={`${styles.categoryBadge} ${styles[request.category.toLowerCase()]}`}>
+              <h4>{request.donor_name}</h4>
+              <span className={`${styles.categoryBadge}`}>
                 {request.category}
               </span>
             </div>
           </div>
-          
+
           <div className={styles.requestActions}>
             {request.status === 'pending' ? (
               <>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handleApprove(request.id); }}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleApprove(request.id);
+                  }}
                   className={`${styles.actionBtn} ${styles.approveBtn}`}
-                  aria-label="Approve request"
                 >
                   <Check size={16} />
                 </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); handleReject(request.id); }}
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleReject(request.id);
+                  }}
                   className={`${styles.actionBtn} ${styles.rejectBtn}`}
-                  aria-label="Reject request"
                 >
                   <X size={16} />
                 </button>
               </>
             ) : (
-              <button 
-                className={`${styles.actionBtn} ${styles.completedBtn}`}
-                aria-label="Completed request"
-              >
+              <button className={`${styles.actionBtn} ${styles.completedBtn}`}>
                 <Check size={16} />
               </button>
             )}
-            
+
             <button className={styles.expandBtn}>
               {expandedRequest === request.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
         </div>
-        
+
         {expandedRequest === request.id && (
           <div className={styles.requestExpanded}>
             <div className={styles.donorDetails}>
@@ -126,12 +134,12 @@ const DonationRequestsPage: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className={styles.donationDetails}>
               <h5>Donation Details</h5>
               <ul className={styles.itemsList}>
-                {request.items.map((item, index) => (
-                  <li key={index}>{item}</li>
+                {request.items.map((item, idx) => (
+                  <li key={idx}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -144,11 +152,11 @@ const DonationRequestsPage: React.FC = () => {
   return (
     <div className={styles.donationRequestsPage}>
       <Header userType="orphanage" />
-      
+
       {/* Banner */}
       <section className={styles.banner}>
-        <img 
-          src="https://images.unsplash.com/photo-1524069290683-0457abfe42c3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2Nob29sJTIwc3R1ZGVudHxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000"
+        <img
+          src="https://images.unsplash.com/photo-1524069290683-0457abfe42c3"
           alt="Orphanage banner"
           className={styles.bannerImage}
         />
@@ -157,47 +165,54 @@ const DonationRequestsPage: React.FC = () => {
       <div className={styles.container}>
         <section className={styles.requestsSection}>
           <h1>Donation Requests</h1>
-          
+
+          {/* Tabs */}
           <div className={styles.tabs}>
-            <button 
-              onClick={() => setActiveTab('requests')}
-              className={`${styles.tab} ${activeTab === 'requests' ? styles.activeTab : ''}`}
+            <button
+              onClick={() => setActiveTab("requests")}
+              className={`${styles.tab} ${activeTab === "requests" ? styles.activeTab : ""}`}
             >
               Requests
             </button>
-            <button 
-              onClick={() => setActiveTab('completed')}
-              className={`${styles.tab} ${activeTab === 'completed' ? styles.activeTab : ''}`}
+
+            <button
+              onClick={() => setActiveTab("completed")}
+              className={`${styles.tab} ${activeTab === "completed" ? styles.activeTab : ""}`}
             >
               Completed
             </button>
           </div>
-          
+
+          {/* Content */}
           <div className={styles.requestsList}>
-            {activeTab === 'requests' ? (
-              <>
-                {pendingRequests.length > 0 ? (
-                  renderRequests(pendingRequests)
-                ) : (
-                  <div className={styles.emptyState}>
-                    <p>No pending requests at the moment.</p>
-                  </div>
-                )}
-              </>
+            {loading ? (
+              <p>Loading...</p>
+            ) : activeTab === "requests" ? (
+              pendingRequests.length ? (
+                renderRequests(pendingRequests)
+              ) : (
+                <div className={styles.emptyState}>
+                  <p>No pending requests at the moment.</p>
+                </div>
+              )
+            ) : completedRequests.length ? (
+              renderRequests(completedRequests)
             ) : (
-              <>
-                {completedRequests.length > 0 ? (
-                  renderRequests(completedRequests)
-                ) : (
-                  <div className={styles.emptyState}>
-                    <p>No completed requests yet.</p>
-                  </div>
-                )}
-              </>
+              <div className={styles.emptyState}>
+                <p>No completed requests yet.</p>
+              </div>
             )}
           </div>
         </section>
       </div>
+
+      {/* ✅ Floating Add Button */}
+      <button
+        className={styles.floatingAddButton}
+        onClick={() => window.location.href = "/add-requirement"}
+      >
+        <Plus size={28} />
+      </button>
 
       {/* Footer */}
       <footer className={styles.footer}>

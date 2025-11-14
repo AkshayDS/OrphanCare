@@ -17,7 +17,8 @@ import {
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import styles from "../styles/OrphanageDashboard.module.css";
-import {profileService} from "../utils/profile"; // <-- UPDATE IMPORT
+import { profileService } from "../utils/profile";
+import { authService } from "../utils/auth";
 
 interface Requirement {
   category: string;
@@ -29,6 +30,8 @@ interface Requirement {
 const OrphanageDashboard: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+
 
   const [requirements, setRequirements] = useState<Requirement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,11 +45,12 @@ const OrphanageDashboard: React.FC = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       const response = await profileService.getOrphanageProfile();
-
       if (response.success && response.data) {
         setProfile(response.data);
       } else {
         console.error("Failed to fetch profile");
+        authService.logout()
+        navigate('/')
       }
 
       setLoading(false);
@@ -57,31 +61,69 @@ const OrphanageDashboard: React.FC = () => {
 
   // 🟢 Capture new requirement when returning from AddRequirement page
   useEffect(() => {
-    if (location.state && (location.state as any).newRequirement) {
-      const newReq = (location.state as any).newRequirement as Requirement;
-      setRequirements((prev) => [...prev, newReq]);
-      navigate(location.pathname, { replace: true });
+  const fetchRequirements = async () => {
+    try {
+      const token = localStorage.getItem("sessionToken");
+
+      const res = await fetch("http://localhost:8000/api/requirement/mine/", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      console.log("Fetched Requirements:", data);
+
+      if (res.ok && Array.isArray(data)) {
+        setRequirements(data); // store full API response
+      } else {
+        console.error("Failed to fetch requirements");
+      }
+    } catch (err) {
+      console.error("Error:", err);
     }
-  }, [location, navigate]);
+  };
+
+  fetchRequirements();
+}, []);
+
+
+
+const toggleCollapse = (category: string) => {
+  setCollapsed(prev => ({
+    ...prev,
+    [category]: !prev[category]
+  }));
+};
+
 
   const renderRequirements = (category: string) => {
-    return requirements
-      .filter((r) => r.category?.toLowerCase() === category.toLowerCase())
-      .map((r, idx) => (
-        <motion.div
-          key={idx}
-          className={styles.requirementCard}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: idx * 0.1 }}
-        >
-          <span>{r.name}</span>
-          <span>
-            {r.quantity} {r.unit}
-          </span>
-        </motion.div>
-      ));
-  };
+  return requirements
+    .filter((r) => r.category?.toLowerCase() === category.toLowerCase())
+    .map((r) => (
+      <motion.div
+        key={r.id}
+        className={styles.requirementCard}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className={styles.reqName}>{r.item_name}</div>
+
+        <div className={styles.reqQty}>
+          Needed: <b>{r.quantity_needed}</b>{" "}
+          {r.quantity_received > 0 && (
+            <> | Received: <b>{r.quantity_received}</b></>
+          )}
+        </div>
+
+        {r.description && (
+          <div className={styles.reqDesc}>{r.description}</div>
+        )}
+      </motion.div>
+    ));
+};
 
   // -----------------------------------------
   // 🛑 SHOW LOADING STATE UNTIL API RETURNS
@@ -190,98 +232,60 @@ const OrphanageDashboard: React.FC = () => {
       <hr className={styles.hrrr} />
 
       {/* Orphanage Needs Section */}
-      <section className={styles.needsSection}>
-        <div className={styles.container}>
-          <h2 className={styles.sectionTitle}>Orphanage Needs</h2>
+      {/* Orphanage Needs Section */}
+      {/* Orphanage Needs Section */}
+<section className={styles.needsSection}>
+  <div className={styles.container}>
+    <h2 className={styles.sectionTitle}>Orphanage Needs</h2>
 
-          {/* Basic Needs */}
-          <div className={styles.needGroup}>
-            <h3>Basic Needs</h3>
-            <div className={styles.needCards}>
-              {[
-                { icon: <ShoppingCart />, title: "Groceries", link: "groceries" },
-                { icon: <Bed />, title: "Bedding", link: "bedding" },
-                { icon: <Utensils />, title: "Food", link: "food" },
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  className={styles.needCard}
-                  whileHover={{ scale: 1.05, rotate: 1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className={styles.needIcon}>{item.icon}</div>
-                  <span className={styles.needTitle}>{item.title}</span>
-                  <button
-                    className={styles.addBtn}
-                    onClick={() => navigate(`/add-requirement/${item.link}`)}
-                  >
-                    <Plus size={18} />
-                  </button>
-                </motion.div>
-              ))}
-
-              {renderRequirements("groceries")}
-              {renderRequirements("bedding")}
-              {renderRequirements("food")}
-            </div>
-          </div>
-
-          {/* Educational */}
-          <div className={styles.needGroup}>
-            <h3>Educational Supplies</h3>
-            <div className={styles.needCards}>
-              {[
-                { icon: <PenTool />, title: "Stationaries", link: "stationaries" },
-                { icon: <BookOpen />, title: "Books", link: "books" },
-                { icon: <Package />, title: "Others", link: "educational-others" },
-              ].map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  className={styles.needCard}
-                  whileHover={{ scale: 1.05, y: -5 }}
-                  transition={{ type: "spring", stiffness: 150 }}
-                >
-                  <div className={styles.needIcon}>{item.icon}</div>
-                  <span className={styles.needTitle}>{item.title}</span>
-                  <button
-                    className={styles.addBtn}
-                    onClick={() => navigate(`/add-requirement/${item.link}`)}
-                  >
-                    <Plus size={18} />
-                  </button>
-                </motion.div>
-              ))}
-
-              {renderRequirements("stationaries")}
-              {renderRequirements("books")}
-              {renderRequirements("educational-others")}
-            </div>
-          </div>
-
-          {/* General */}
-          <div className={styles.needGroup}>
-            <h3>Other Needs</h3>
-            <div className={styles.needCardsSingle}>
-              <motion.div
-                className={styles.needCard}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Package className={styles.needIcon} size={28} />
-                <span className={styles.needTitle}>General</span>
-                <button
-                  className={styles.addBtn}
-                  onClick={() => navigate("/add-requirement/general")}
-                >
-                  <Plus size={18} />
-                </button>
-              </motion.div>
-
-              {renderRequirements("general")}
-            </div>
-          </div>
+    {[
+      { title: "Groceries", key: "groceries" },
+      { title: "Bedding", key: "bedding" },
+      { title: "Food", key: "food" },
+      { title: "Stationaries", key: "stationaries" },
+      { title: "Books", key: "books" },
+      { title: "Educational - Others", key: "educational-others" },
+      { title: "others", key: "others" },
+    ].map((cat, idx) => (
+      <div key={idx} className={styles.needGroup}>
+        
+        {/* CATEGORY HEADER */}
+        <div
+          className={styles.categoryHeader}
+          onClick={() => toggleCollapse(cat.key)}
+        >
+          <h3>{cat.title}</h3>
+          <span className={styles.collapseIcon}>
+            {collapsed[cat.key] ? "➕" : "➖"}
+          </span>
         </div>
-      </section>
+
+        {/* COLLAPSIBLE BODY */}
+        <motion.div
+          initial={false}
+          animate={{ height: collapsed[cat.key] ? 0 : "auto", opacity: collapsed[cat.key] ? 0 : 1 }}
+          transition={{ duration: 0.3 }}
+          className={styles.collapseBody}
+        >
+          <div className={styles.requirementsList}>
+            {renderRequirements(cat.key)}
+          </div>
+
+          {/* ADD BUTTON */}
+          <button
+            className={styles.categoryAddButton}
+            onClick={() => navigate(`/add-requirement/${cat.key}`)}
+          >
+            <Plus size={16} /> Add {cat.title}
+          </button>
+        </motion.div>
+
+        <hr className={styles.categoryDivider} />
+      </div>
+    ))}
+  </div>
+</section>
+
 
       <footer className={styles.footer}>
         <p>OrphanCare Network © 2025</p>

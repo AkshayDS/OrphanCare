@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styles from "../styles/AddRequirement.module.css";
+import { requirementService } from "../utils/donation_service";
 
 const AddRequirement: React.FC = () => {
   const { category } = useParams<{ category: string }>();
@@ -10,32 +11,45 @@ const AddRequirement: React.FC = () => {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState("kgs");
-  const [selectedCategory, setSelectedCategory] = useState(category || "groceries");
+  const [description, setDescription] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(category || "others");
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!name || !quantity) {
       alert("Please fill all fields!");
       return;
     }
 
-    // ✅ Save requirement in localStorage (simple persistence)
-    const stored = JSON.parse(localStorage.getItem("requirements") || "[]");
-    const newRequirement = {
-      name,
-      quantity,
-      unit,
-      category: selectedCategory,
-    };
-    localStorage.setItem("requirements", JSON.stringify([...stored, newRequirement]));
+    setLoading(true);
 
-    // ✅ Go back to dashboard
-    navigate("/orphanage/dashboard");
+    const payload = {
+      item_name: name,
+      category: selectedCategory,
+      description: description || `${quantity} ${unit} needed`,
+      quantity_needed: quantity,
+      posted_date: new Date().toISOString(),
+      deadline: null
+    };
+
+    const res = await requirementService.createRequirement(payload);
+
+    setLoading(false);
+
+    if (res.ok) {
+      alert("Requirement added successfully!");
+      navigate("/orphanage/dashboard");
+    } else {
+      alert("Failed to add requirement.");
+      console.error(res.data || res.error);
+    }
   };
 
   return (
     <div className={styles.addRequirement}>
       <h2>Add Requirement</h2>
       <div className={styles.formCard}>
+        
         {/* Name */}
         <div className={styles.formGroup}>
           <label>Name:</label>
@@ -65,6 +79,16 @@ const AddRequirement: React.FC = () => {
           </div>
         </div>
 
+        {/* Description */}
+        <div className={styles.formGroup}>
+          <label>Description (optional):</label>
+          <textarea
+            value={description}
+            placeholder="Extra notes..."
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
+
         {/* Category */}
         <div className={styles.formGroup}>
           <label>Category:</label>
@@ -72,11 +96,11 @@ const AddRequirement: React.FC = () => {
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
-            <option value="groceries">Groceries</option>
-            <option value="stationary">Stationary</option>
-            <option value="bedding">Bedding</option>
+            <option value="education">Stationaries</option>
+            <option value="clothing">Bedding</option>
             <option value="food">Food</option>
-            <option value="general">General</option>
+            <option value="others">Others</option>
+            <option value="medical">General</option>
           </select>
         </div>
 
@@ -85,8 +109,8 @@ const AddRequirement: React.FC = () => {
           <button className={styles.cancelBtn} onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button className={styles.saveBtn} onClick={handleSave}>
-            Save
+          <button className={styles.saveBtn} onClick={handleSave} disabled={loading}>
+            {loading ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
