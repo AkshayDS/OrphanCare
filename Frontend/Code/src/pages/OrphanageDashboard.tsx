@@ -97,13 +97,13 @@ const OrphanageDashboard: React.FC = () => {
   // -----------------------------------------
   // ❗ No profile found
   // -----------------------------------------
-  if (!profile) {
-    return (
-      <div className={styles.errorScreen}>
-        <p>Could not load profile data</p>
-      </div>
-    );
-  }
+  // if (!profile) {
+  //   return (
+  //     <div className={styles.errorScreen}>
+  //       <p>Could not load profile data</p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className={styles.orphanageDashboard}>
@@ -119,7 +119,7 @@ const OrphanageDashboard: React.FC = () => {
         >
           <h2 className={`${styles.welcomeText} ${styles.typingEffect}`}>
             Welcome back,{" "}
-            <span className={styles.highlight}>{profile.orphanage_name}</span>{" "}
+            <span className={styles.highlight}>{profile?.orphanage_name}</span>{" "}
             <span className={styles.wave}>👋</span>
           </h2>
 
@@ -138,21 +138,21 @@ const OrphanageDashboard: React.FC = () => {
             </div>
 
             <div className={styles.profileInfo}>
-              <h3>{profile.orphanage_name}</h3>
+              <h3>{profile?.orphanage_name}</h3>
 
               <div className={styles.contactItem}>
                 <MapPin size={16} />
                 <span>
-                  {profile.address}
-                  {profile.city ? `, ${profile.city}` : ""}
-                  {profile.state ? `, ${profile.state}` : ""}
-                  {profile.pincode ? ` - ${profile.pincode}` : ""}
+                  {profile?.address}
+                  {profile?.city ? `, ${profile?.city}` : ""}
+                  {profile?.state ? `, ${profile?.state}` : ""}
+                  {profile?.pincode ? ` - ${profile?.pincode}` : ""}
                 </span>
               </div>
 
               <div className={styles.contactItem}>
                 <Phone size={16} />
-                <span>{profile.phone_number}</span>
+                <span>{profile?.phone_number}</span>
               </div>
             </div>
 
@@ -168,9 +168,9 @@ const OrphanageDashboard: React.FC = () => {
           {/* 📊 STATS SECTION */}
           <div className={styles.statsSection}>
             {[
-              { number: profile.students_count || 0, label: "Students" },
-              { number: profile.boys_count || 0, label: "Male" },
-              { number: profile.girls_count || 0, label: "Female" },
+              { number: profile?.students_count || 0, label: "Students" },
+              { number: profile?.boys_count || 0, label: "Male" },
+              { number: profile?.girls_count || 0, label: "Female" },
             ].map((stat, idx) => (
               <motion.div
                 key={idx}
