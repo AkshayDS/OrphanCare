@@ -3,6 +3,25 @@ from rest_framework import serializers
 from django.utils import timezone
 from .models import User, OTP
 from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['role'] = user.role  # adds role inside JWT itself
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        # Add extra fields in response body
+        data['role'] = self.user.role
+
+        return data
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])

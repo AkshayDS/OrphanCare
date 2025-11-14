@@ -14,6 +14,11 @@ from rest_framework.permissions import AllowAny
 from .models import User, OTP
 from .serializers import RegisterSerializer, VerifyOTPSerializer
 from .utils import send_otp_email
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
 
 class RegisterAPIView(generics.CreateAPIView):
     permission_classes = (AllowAny,)

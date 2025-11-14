@@ -6,7 +6,7 @@ import { authService } from '../utils/auth';
 import styles from '../styles/EmailVerification.module.css';
 
 const EmailVerification: React.FC = () => {
-  const [code, setCode] = useState(['', '', '', '', '']);
+  const [code, setCode] = useState(['', '', '', '', '','']);
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const EmailVerification: React.FC = () => {
     e.preventDefault();
     const verificationCode = code.join('');
     
-    if (verificationCode.length !== 5) {
+    if (verificationCode.length !== 6) {
       alert('Please enter the complete 5-digit code');
       return;
     }
@@ -50,8 +50,8 @@ const EmailVerification: React.FC = () => {
     setIsLoading(true);
     
     authService.verifyEmail({
-      email,
-      verificationCode
+      email : email,
+      code : verificationCode
     }).then(result => {
       if (result.success) {
         if (role === 'Donor') {

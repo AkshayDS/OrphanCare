@@ -1,11 +1,11 @@
 import { supabase } from './supabase';
 
-const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const API_BASE_URL = `http://127.0.0.1:8000/api`;
 
 export interface RegisterData {
   email: string;
   password: string;
-  role: 'Donor' | 'Orphanage';
+  role: 'donor' | 'orphanage';
 }
 
 export interface LoginData {
@@ -15,13 +15,13 @@ export interface LoginData {
 
 export interface VerifyEmailData {
   email: string;
-  verificationCode: string;
+  code: string;
 }
 
 export interface AuthUser {
   id: string;
   email: string;
-  role: 'Donor' | 'Orphanage';
+  role: 'donor' | 'orphanage';
   isVerified: boolean;
 }
 
@@ -40,7 +40,7 @@ class AuthService {
     
     if (token && user) {
       this.sessionToken = token;
-      this.currentUser = JSON.parse(user);
+      // this.currentUser = JSON.parse(user);
     }
   }
 
@@ -61,11 +61,11 @@ class AuthService {
 // --- replace the register method in src/utils/auth.ts with the following --- 
 async register(data: RegisterData): Promise<{ success: boolean; message: string; accountId?: string }> {
   try {
-    const response = await fetch(`${API_BASE_URL}/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        // 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify(data),
     });
@@ -99,11 +99,10 @@ async register(data: RegisterData): Promise<{ success: boolean; message: string;
 
   async verifyEmail(data: VerifyEmailData): Promise<{ success: boolean; message: string; role?: string }> {
     try {
-      const response = await fetch(`${API_BASE_URL}/verify-email`, {
+      const response = await fetch(`${API_BASE_URL}/auth/verify-otp/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(data),
       });
@@ -125,36 +124,64 @@ async register(data: RegisterData): Promise<{ success: boolean; message: string;
     }
   }
 
-  async login(data: LoginData): Promise<{ success: boolean; message: string; user?: AuthUser }> {
-    try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify(data),
-      });
+  async login(
+  data: LoginData
+): Promise<{ success: boolean; message: string; user?: AuthUser }> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/token/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-      const result = await response.json();
+    const result = await response.json();
 
-      if (!response.ok) {
-        return { success: false, message: result.error || 'Login failed' };
-      }
-
-      // Save session
-      this.saveSession(result.sessionToken, result.user);
-
-      return { 
-        success: true, 
-        message: result.message,
-        user: result.user 
-      };
-    } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, message: 'Network error. Please try again.' };
+    if (!response.ok) {
+      return { success: false, message: result.detail || "Login failed" };
     }
+
+    // Extract tokens
+    const accessToken = result.access || null;
+    const refreshToken = result.refresh || null;
+    const role = result.role || null;
+
+    if (!accessToken || !refreshToken || !role) {
+      return { success: false, message: "Invalid login response" };
+    }
+
+    // Save tokens
+    localStorage.setItem("sessionToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+
+    // Build the real user object
+    const user: AuthUser = {
+      id: "unknown",       // If needed, fetch in a /me/ call later
+      email: data.email,
+      role: role,          // ⭐ Now coming from backend
+      isVerified: true     // adjust if needed
+    };
+
+    // Save user in storage
+    localStorage.setItem("currentUser", JSON.stringify(user));
+
+    // Update state
+    this.sessionToken = accessToken;
+    this.currentUser = user;
+
+    return {
+      success: true,
+      message: "Login successful",
+      user: user,
+    };
+  } catch (error) {
+    console.error("Login error:", error);
+    return { success: false, message: "Network error. Please try again." };
   }
+}
+
+
 
   logout() {
     this.clearSession();

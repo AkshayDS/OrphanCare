@@ -15,6 +15,7 @@ class OrphanageProfile(models.Model):
     pincode = models.CharField(max_length=10)
     phone_number = models.CharField(max_length=15)
     email = models.EmailField()
+    established_on = models.DateField(null=True)
 
     # Counts
     total_orphans = models.PositiveIntegerField(default=0)

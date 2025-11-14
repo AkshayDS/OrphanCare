@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     "donor",
     "orphanage",
     "donation",
-    "requirement"
+    "requirement",
+    "psycopg"
 ]
 
 MIDDLEWARE = [
@@ -152,10 +153,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-ALLOWED_HOSTS = [
-    'orphancare-backend.onrender.com'
-]
 
 AUTH_USER_MODEL = "auth_app.User"
 

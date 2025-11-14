@@ -45,12 +45,12 @@ function App() {
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/register" element={<RegistrationChoice />} />
-            <Route path="/register/orphanage" element={<RegisterForm role="Orphanage" />} />
-            <Route path="/register/donor" element={<RegisterForm role="Donor" />} />
+            <Route path="/register/orphanage" element={<RegisterForm role="orphanage" />} />
+            <Route path="/register/donor" element={<RegisterForm role="donor" />} />
             <Route path="/verify-email" element={<EmailVerification />} />
             <Route path="/login" element={<LoginChoice />} />
-            <Route path="/login/orphanage" element={<LoginForm role="Orphanage" />} />
-            <Route path="/login/donor" element={<LoginForm role="Donor" />} />
+            <Route path="/login/orphanage" element={<LoginForm role="orphanage" />} />
+            <Route path="/login/donor" element={<LoginForm role="donor" />} />
             
 
             {/* Donor routes */}

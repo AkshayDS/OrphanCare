@@ -6,7 +6,7 @@ import { authService } from '../utils/auth';
 import styles from '../styles/RegisterForm.module.css';
 
 interface RegisterFormProps {
-  role: 'Orphanage' | 'Donor';
+  role: 'orphanage' | 'donor';
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {

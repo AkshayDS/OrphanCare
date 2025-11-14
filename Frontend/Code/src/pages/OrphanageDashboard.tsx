@@ -17,6 +17,7 @@ import {
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import styles from "../styles/OrphanageDashboard.module.css";
+import {profileService} from "../utils/profile"; // <-- UPDATE IMPORT
 
 interface Requirement {
   category: string;
@@ -28,9 +29,33 @@ interface Requirement {
 const OrphanageDashboard: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [requirements, setRequirements] = useState<Requirement[]>([]);
 
-  // ✅ Capture new requirement when coming back from AddRequirement page
+  const [requirements, setRequirements] = useState<Requirement[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🟢 STORE PROFILE DATA
+  const [profile, setProfile] = useState<any>(null);
+
+  // ------------------------------
+  // 🔥 FETCH ORPHANAGE PROFILE
+  // ------------------------------
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const response = await profileService.getOrphanageProfile();
+
+      if (response.success && response.data) {
+        setProfile(response.data);
+      } else {
+        console.error("Failed to fetch profile");
+      }
+
+      setLoading(false);
+    };
+
+    fetchProfile();
+  }, []);
+
+  // 🟢 Capture new requirement when returning from AddRequirement page
   useEffect(() => {
     if (location.state && (location.state as any).newRequirement) {
       const newReq = (location.state as any).newRequirement as Requirement;
@@ -58,6 +83,28 @@ const OrphanageDashboard: React.FC = () => {
       ));
   };
 
+  // -----------------------------------------
+  // 🛑 SHOW LOADING STATE UNTIL API RETURNS
+  // -----------------------------------------
+  if (loading) {
+    return (
+      <div className={styles.loadingScreen}>
+        <p>Loading your dashboard...</p>
+      </div>
+    );
+  }
+
+  // -----------------------------------------
+  // ❗ No profile found
+  // -----------------------------------------
+  if (!profile) {
+    return (
+      <div className={styles.errorScreen}>
+        <p>Could not load profile data</p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.orphanageDashboard}>
       <Header userType="orphanage" />
@@ -72,13 +119,15 @@ const OrphanageDashboard: React.FC = () => {
         >
           <h2 className={`${styles.welcomeText} ${styles.typingEffect}`}>
             Welcome back,{" "}
-          <span className={styles.highlight}>Abhyadama</span> <span className={styles.wave}>👋</span>
+            <span className={styles.highlight}>{profile.orphanage_name}</span>{" "}
+            <span className={styles.wave}>👋</span>
           </h2>
+
           <p className={`${styles.subtitle} ${styles.fadeIn}`}>
-                We’re glad to see you again! Here’s your profile overview.
+            We’re glad to see you again! Here’s your profile overview.
           </p>
 
-
+          {/* MAIN PROFILE CARD */}
           <motion.div
             className={styles.profileCard}
             whileHover={{ scale: 1.02 }}
@@ -87,17 +136,26 @@ const OrphanageDashboard: React.FC = () => {
             <div className={styles.profileIcon}>
               <User size={48} color="var(--primary-maroon)" />
             </div>
+
             <div className={styles.profileInfo}>
-              <h3>Abhyadama</h3>
+              <h3>{profile.orphanage_name}</h3>
+
               <div className={styles.contactItem}>
                 <MapPin size={16} />
-                <span>Whitefield Post, Bengaluru 560066</span>
+                <span>
+                  {profile.address}
+                  {profile.city ? `, ${profile.city}` : ""}
+                  {profile.state ? `, ${profile.state}` : ""}
+                  {profile.pincode ? ` - ${profile.pincode}` : ""}
+                </span>
               </div>
+
               <div className={styles.contactItem}>
                 <Phone size={16} />
-                <span>+91 9876543210</span>
+                <span>{profile.phone_number}</span>
               </div>
             </div>
+
             <Link
               to="/orphanage/profile-complete"
               className={`${styles.btn} ${styles.btnEdit}`}
@@ -107,12 +165,12 @@ const OrphanageDashboard: React.FC = () => {
             </Link>
           </motion.div>
 
-          {/* Stats Section */}
+          {/* 📊 STATS SECTION */}
           <div className={styles.statsSection}>
             {[
-              { number: "800+", label: "Students" },
-              { number: "500+", label: "Male" },
-              { number: "300+", label: "Female" },
+              { number: profile.students_count || 0, label: "Students" },
+              { number: profile.boys_count || 0, label: "Male" },
+              { number: profile.girls_count || 0, label: "Female" },
             ].map((stat, idx) => (
               <motion.div
                 key={idx}
@@ -168,7 +226,7 @@ const OrphanageDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Educational Supplies */}
+          {/* Educational */}
           <div className={styles.needGroup}>
             <h3>Educational Supplies</h3>
             <div className={styles.needCards}>
@@ -200,7 +258,7 @@ const OrphanageDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Other Needs */}
+          {/* General */}
           <div className={styles.needGroup}>
             <h3>Other Needs</h3>
             <div className={styles.needCardsSingle}>

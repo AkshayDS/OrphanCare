@@ -6,7 +6,7 @@ import { authService } from '../utils/auth';
 import styles from '../styles/LoginForm.module.css';
 
 interface LoginFormProps {
-  role: 'Orphanage' | 'Donor';
+  role: 'orphanage' | 'donor';
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
@@ -35,6 +35,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         password: formData.password
       });
 
+
       if (result.success && result.user) {
         // If returned user role doesn't match the login page, show message and stop
         if (result.user.role !== role) {
@@ -45,9 +46,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
 
         // Save userType to localStorage so route guards & header can detect role
         try {
-          if (result.user.role === 'Donor') {
+          if (result.user.role === 'donor') {
             localStorage.setItem('userType', 'donor');
-          } else if (result.user.role === 'Orphanage') {
+          } else if (result.user.role === 'orphanage') {
             localStorage.setItem('userType', 'orphanage');
           }
         } catch (err) {
@@ -55,7 +56,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         }
 
         // Navigate to appropriate dashboard
-        if (result.user.role === 'Donor') {
+        if (result.user.role === 'donor') {
           navigate('/donor/dashboard');
         } else {
           navigate('/orphanage/dashboard');
@@ -99,7 +100,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
             
             <div className={styles.formContent}>
               <h1>Login</h1>
-              <p className={styles.subtitle}>As {role === 'Orphanage' ? 'an' : 'a'} {role}</p>
+              <p className={styles.subtitle}>As {role === 'orphanage' ? 'an' : 'a'} {role}</p>
               
               <form onSubmit={handleSubmit}>
                 <div className={styles.formGroup}>
