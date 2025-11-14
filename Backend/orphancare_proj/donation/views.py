@@ -41,4 +41,15 @@ class DonationStatusUpdateView(generics.UpdateAPIView):
     queryset = Donation.objects.all()
 
     def perform_update(self, serializer):
-        orphanage_profile =_
+        orphanage_profile = getattr(self.request.user, "orphanageprofile", None)
+
+        # if orphanage_profile is None:
+        #     raise PermissionDenied("Only orphanages can update donation status.")
+
+        donation = self.get_object()
+
+        # if donation.orphanage != orphanage_profile:
+        #     raise PermissionDenied("You are not allowed to update this donation.")
+
+        # Save the update
+        serializer.save()
