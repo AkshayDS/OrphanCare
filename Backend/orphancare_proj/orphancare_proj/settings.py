@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
-import dj_database_url
+# import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -89,16 +89,16 @@ WSGI_APPLICATION = 'orphancare_proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-if not DEBUG:
-    DATABASES ={
-    "default": dj_database_url.parse(os.environ.get("postgresql://db_0_fayq_user:xckKCY625oAC3RGUaFTubK2VdYdjD16i@dpg-d4adf2ur433s73eibmjg-a.singapore-postgres.render.com/db_0_fayq"))
-}
+# if not DEBUG:
+#     DATABASES ={
+#     "default": dj_database_url.parse(os.environ.get("postgresql://db_0_fayq_user:xckKCY625oAC3RGUaFTubK2VdYdjD16i@dpg-d4adf2ur433s73eibmjg-a.singapore-postgres.render.com/db_0_fayq"))
+# }
 
 
 
-else:
+# else:
 
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
