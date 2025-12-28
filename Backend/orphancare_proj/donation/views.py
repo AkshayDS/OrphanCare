@@ -8,11 +8,22 @@ from orphanage.models import OrphanageProfile
 
 class DonationCreateView(generics.CreateAPIView):
     serializer_class = DonationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def perform_create(self, serializer):
         donor_profile = DonorProfile.objects.get(user=self.request.user)
-        serializer.save(donor=donor_profile)
+
+        requirement = serializer.validated_data.get("requirement")
+
+        orphanage_id = self.request.data.get("orphanage")
+        orphanage = OrphanageProfile.objects.get(id=orphanage_id)
+
+        serializer.save(
+            donor=donor_profile,
+            orphanage=orphanage,
+            item_name=requirement.item_name if requirement else serializer.validated_data.get("item_name"),
+        )
+
 
 
 class DonorDonationListView(generics.ListAPIView):

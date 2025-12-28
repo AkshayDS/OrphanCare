@@ -120,11 +120,17 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
           >
             Learn
           </Link>
+
+           <Link
+            to="/LearnQuiz"
+            className={`${styles.navLink} ${isActive('/LearnQuiz') ? styles.active : ''}`}
+          >
+            
+          </Link>
           <Link
             to="/learn/dashboard"
             className={`${styles.navLink} ${isActive('/learn/dashboard') ? styles.active : ''}`}
           >
-            Learning Dashboard
           </Link>
           <button
             onClick={() => setShowLogoutModal(true)}

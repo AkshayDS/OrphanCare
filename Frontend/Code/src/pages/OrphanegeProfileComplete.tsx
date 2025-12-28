@@ -187,6 +187,8 @@ const OrphanegeProfileComplete: React.FC = () => {
 const [accessToken, setAccessToken] = React.useState<string | null>(null);
 
 React.useEffect(() => {
+
+  console.log("profile page with toke ",accessToken)
   // 1️⃣ Check login status
   if (!authService.isAuthenticated()) {
     console.warn("User not authenticated → redirecting to login...");

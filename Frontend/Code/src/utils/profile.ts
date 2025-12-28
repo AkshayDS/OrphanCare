@@ -98,6 +98,7 @@ class ProfileService {
     const formData = new FormData();
 
     const token = localStorage.getItem("sessionToken");
+    console.log("token",token)
     
     // Required fields
     formData.append('orphanage_name', profileData.orphanage_name);

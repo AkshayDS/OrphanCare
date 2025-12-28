@@ -1,124 +1,131 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Book, Shirt, Bed, Utensils, PenTool } from 'lucide-react';
-import Header from '../components/Header';
-import styles from '../styles/DonationPage.module.css';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import styles from "../styles/DonationPage.module.css";
+
+interface Requirement {
+  id: number;
+  item_name: string;
+  description: string;
+  quantity_needed: number;
+  quantity_received: number;
+  orphanage: number;
+}
 
 const DonationPage: React.FC = () => {
   const { orphanageId } = useParams();
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState<string>('');
-  const [donationDetails, setDonationDetails] = useState<{[key: string]: string}>({});
 
-  const donationTypes = [
-    { id: 'groceries', label: 'Groceries', icon: ShoppingCart },
-    { id: 'stationery', label: 'Stationery', icon: PenTool },
-    { id: 'books', label: 'Books', icon: Book },
-    { id: 'bedding', label: 'Bedding', icon: Bed },
-    { id: 'food', label: 'Food', icon: Utensils }
-  ];
+  const [requirements, setRequirements] = useState<Requirement[]>([]);
+  const [selectedRequirement, setSelectedRequirement] = useState<number | null>(null);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [loading, setLoading] = useState(false);
 
-  const handleTypeSelect = (type: string) => {
-    setSelectedType(type);
-  };
+  const token = localStorage.getItem("sessionToken");
 
-  const handleDetailsChange = (type: string, value: string) => {
-    setDonationDetails({
-      ...donationDetails,
-      [type]: value
-    });
-  };
+  // 🔹 Fetch requirements
+  useEffect(() => {
 
-  const handleDonate = () => {
-    navigate('/donation/success');
+    fetch(`http://172.16.31.165:8000/api/requirement/orphanage/${orphanageId}`)
+      .then(res => res.json())
+      .then(data => {
+        const filtered = data.filter(
+          (req: Requirement) => req.orphanage === Number(orphanageId)
+        );
+        setRequirements(filtered);
+      })
+      .catch(err => console.error(err));
+  }, [orphanageId]);
+
+  // 🔹 Submit donation
+  const handleDonate = async () => {
+    if (!selectedRequirement) {
+      alert("Please select a requirement");
+      return;
+    }
+
+    setLoading(true);
+
+    const req = requirements.find(r => r.id === selectedRequirement);
+
+    try {
+      const res = await fetch("http://172.16.31.165:8000/api/donation/create/", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          orphanage: orphanageId,
+          item_name: req?.item_name,
+          quantity: quantity,
+          description: req?.description
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        console.error(err);
+        alert("Donation failed");
+        return;
+      }
+
+      navigate("/donation/success");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.donationPage}>
       <Header userType="donor" />
-      
+
       <div className={styles.container}>
         <div className={styles.card}>
-          <div className={styles.header}>
-            <h1>Donation</h1>
-          </div>
-          
+          <h1>Donate Items</h1>
+
+          {/* Requirement selection */}
           <div className={styles.section}>
-            <h2>Types</h2>
-            <div className={styles.typeButtons}>
-              {donationTypes.map((type) => {
-                const Icon = type.icon;
-                return (
-                  <button
-                    key={type.id}
-                    onClick={() => handleTypeSelect(type.id)}
-                    className={`${styles.typeButton} ${selectedType === type.id ? styles.active : ''}`}
-                  >
-                    <Icon size={24} />
-                    <span>{type.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <h3>Select Requirement</h3>
+            <select
+              className={styles.input}
+              value={selectedRequirement ?? ""}
+              onChange={(e) => setSelectedRequirement(Number(e.target.value))}
+            >
+              <option value="">-- Select --</option>
+              {requirements.map(req => (
+                <option key={req.id} value={req.id}>
+                  {req.item_name} (Needed: {req.quantity_needed - req.quantity_received})
+                </option>
+              ))}
+            </select>
           </div>
-          
-          {/* Dynamic input sections */}
-          {donationTypes.map((type) => (
-            <div key={type.id} className={styles.section}>
-              {type.id === 'bedding' && (
-                <>
-                  <h3>{type.label}</h3>
-                  <div className={styles.inputGroup}>
-                    <input
-                      type="text"
-                      placeholder="ex: 2 Pillows and 5 Bedsheets"
-                      value={donationDetails[type.id] || ''}
-                      onChange={(e) => handleDetailsChange(type.id, e.target.value)}
-                      className={styles.input}
-                    />
-                  </div>
-                </>
-              )}
-              
-              {type.id === 'food' && (
-                <>
-                  <h3>{type.label}</h3>
-                  <div className={styles.foodNote}>
-                    <h4>Contact Orphanage Directly</h4>
-                    <div className={styles.noteContent}>
-                      <p><strong>NOTE:</strong> We kindly request donors to contact the orphanage directly to confirm the current needs. Since the number of children at our orphanage may vary from time to time due to special activities and other obligations, the food requirements also change accordingly. Your understanding and continued support are deeply appreciated.</p>
-                    </div>
-                  </div>
-                </>
-              )}
-              
-              {!['bedding', 'food'].includes(type.id) && (
-                <>
-                  <h3>{type.label}</h3>
-                  <div className={styles.inputGroup}>
-                    <input
-                      type="text"
-                      placeholder={`Enter ${type.label.toLowerCase()} details`}
-                      value={donationDetails[type.id] || ''}
-                      onChange={(e) => handleDetailsChange(type.id, e.target.value)}
-                      className={styles.input}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-          
-          <button 
+
+          {/* Quantity */}
+          <div className={styles.section}>
+            <h3>Quantity</h3>
+            <input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className={styles.input}
+            />
+          </div>
+
+          <button
             onClick={handleDonate}
+            disabled={loading}
             className={`${styles.btn} ${styles.btnDonate}`}
           >
-            DONATE
+            {loading ? "Processing..." : "DONATE"}
           </button>
         </div>
       </div>
-      
-      {/* Footer */}
+
       <footer className={styles.footer}>
         <span>OrphanCare Network</span>
       </footer>

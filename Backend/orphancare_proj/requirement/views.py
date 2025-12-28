@@ -56,3 +56,16 @@ class PublicRequirementListView(generics.ListAPIView):
 
     def get_queryset(self):
         return OrphanageRequirement.objects.filter(is_fulfilled=False).order_by("-posted_date")
+
+
+# requirements/views.py
+class OrphanageRequirementByOrphanageView(generics.ListAPIView):
+    serializer_class = OrphanageRequirementSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        orphanage_id = self.kwargs["orphanage_id"]
+        return OrphanageRequirement.objects.filter(
+            orphanage_id=orphanage_id,
+            is_fulfilled=False
+        ).order_by("-posted_date")

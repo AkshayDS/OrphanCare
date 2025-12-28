@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from orphanage.models import OrphanageProfile
 from donor.models import DonorProfile
+from requirement.models import OrphanageRequirement
 
 class Donation(models.Model):
     STATUS_CHOICES = [
@@ -16,6 +17,14 @@ class Donation(models.Model):
     )
     orphanage = models.ForeignKey(
         OrphanageProfile, on_delete=models.CASCADE, related_name="donations"
+    )
+
+    requirement = models.ForeignKey(
+        OrphanageRequirement,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="donations"
     )
 
     item_name = models.CharField(max_length=255)

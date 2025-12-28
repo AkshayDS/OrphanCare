@@ -1,45 +1,96 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MapPin, Phone, ChevronRight, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 import styles from "../styles/Orphanages.module.css";
 import Header from "../components/Header";
 
+interface Orphanage {
+  id: number;
+  orphanage_name: string;
+  description: string;
+  city: string;
+  state: string;
+  pincode?: string;
+  phone_number?: string;
+}
+
 const Orphanages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [orphanages, setOrphanages] = useState<Orphanage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"all" | "nearby">("all");
 
-  const orphanages = [
-    {
-      id: 1,
-      name: "Abhayadhama Orphanage",
-      description: "Providing care and education to underprivileged children since 1995.",
-      address: "Whitefield Post, Bengaluru 560066",
-      phone: "+91 9876543210",
-      mapUrl: "https://www.google.com/maps?q=Whitefield+Bengaluru",
-    },
-    {
-      id: 2,
-      name: "Hope Children Home",
-      description: "A safe haven for children providing love, care, and quality education.",
-      address: "Koramangala, Bengaluru 560034",
-      phone: "+91 8765432109",
-      mapUrl: "https://www.google.com/maps?q=Koramangala+Bengaluru",
-    },
-  ];
+  const USER_PINCODE = 560082;
 
-  const filteredOrphanages = orphanages.filter((o) =>
-    o.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    o.address.toLowerCase().includes(searchTerm.toLowerCase())
+const getPincodeDistance = (p1?: string) => {
+  if (!p1) return Infinity;
+  return Math.abs(Number(p1) - USER_PINCODE);
+};
+
+const displayedOrphanages =
+  activeTab === "nearby"
+    ? [...orphanages]
+        .filter(o => o.pincode)
+        .sort(
+          (a, b) =>
+            getPincodeDistance(a.pincode) -
+            getPincodeDistance(b.pincode)
+        )
+        .slice(0, 10)
+    : orphanages;
+  
+  const filteredOrphanages = displayedOrphanages.filter((o) =>
+    o.orphanage_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    o.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    o.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+
+
+  useEffect(() => {
+    const fetchOrphanages = async () => {
+      try {
+        const response = await fetch("http://172.16.31.165:8000/api/orphanage/list/");
+        const data = await response.json();
+        setOrphanages(data);
+      } catch (error) {
+        console.error("Failed to fetch orphanages", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrphanages();
+  }, []);
+
+  
 
   return (
     <div className={styles.orphanagesPage}>
       <Header userType="donor" />
 
       <div className={styles.container}>
-        <h2 className={styles.title}> Orphanages Near You</h2>
+        <h2 className={styles.title}>Orphanages Near You</h2>
         <p className={styles.subtitle}>
           Explore orphanages around your area and contribute to their needs.
         </p>
+
+        <div style={{ display: "flex", gap: "10px", marginBottom: "16px" }}>
+  <button
+    onClick={() => setActiveTab("all")}
+    className={activeTab === "all" ? styles.btnDonate : styles.btnMap}
+  >
+    All Orphanages
+  </button>
+
+  <button
+    onClick={() => setActiveTab("nearby")}
+    className={activeTab === "nearby" ? styles.btnDonate : styles.btnMap}
+  >
+    Nearby
+  </button>
+</div>
+
 
         {/* Search Bar */}
         <input
@@ -51,26 +102,42 @@ const Orphanages: React.FC = () => {
         />
 
         <div className={styles.grid}>
-          {filteredOrphanages.length > 0 ? (
+          {loading ? (
+            <p>Loading orphanages...</p>
+          ) : filteredOrphanages.length > 0 ? (
             filteredOrphanages.map((orphanage) => (
               <div key={orphanage.id} className={styles.card}>
-                <h3>{orphanage.name}</h3>
+                <h3>{orphanage.orphanage_name}</h3>
                 <p>{orphanage.description}</p>
+
                 <div className={styles.contact}>
                   <div className={styles.contactItem}>
                     <MapPin size={14} />
-                    <span>{orphanage.address}</span>
+                    <span>{orphanage.city}, {orphanage.state}</span>
                   </div>
-                  <div className={styles.contactItem}>
-                    <Phone size={14} />
-                    <span>{orphanage.phone}</span>
-                  </div>
+
+                  {orphanage.phone_number && (
+                    <div className={styles.contactItem}>
+                      <Phone size={14} />
+                      <span>{orphanage.phone_number}</span>
+                    </div>
+                  )}
                 </div>
+
                 <div className={styles.buttonGroup}>
-                  <Link to={`/orphanage/${orphanage.id}`} className={styles.btnDonate}>
+                  <Link
+                    to={`/orphanage/${orphanage.id}`}
+                    className={styles.btnDonate}
+                  >
                     Donate Now <ChevronRight size={16} />
                   </Link>
-                  <a href={orphanage.mapUrl} target="_blank" rel="noopener noreferrer" className={styles.btnMap}>
+
+                  <a
+                    href={`https://www.google.com/maps?q=${orphanage.city}+${orphanage.state}+${orphanage.pincode}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.btnMap}
+                  >
                     View on Map <Map size={16} />
                   </a>
                 </div>

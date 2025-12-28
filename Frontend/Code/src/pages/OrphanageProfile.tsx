@@ -6,6 +6,34 @@ import styles from "../styles/OrphanageProfile.module.css";
 
 const OrphanageProfile: React.FC = () => {
   const { id } = useParams();
+  const [orphanage, setOrphanage] = React.useState<any>(null);
+const [requirements, setRequirements] = React.useState<any[]>([]);
+const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const [profileRes, reqRes] = await Promise.all([
+        fetch(`http://172.16.31.165:8000/api/orphanage/${id}/`),
+        fetch(`http://172.16.31.165:8000/api/requirement/orphanage/${id}/`)
+      ]);
+
+      const profileData = await profileRes.json();
+      const reqData = await reqRes.json();
+
+      setOrphanage(profileData);
+      setRequirements(reqData);
+    } catch (err) {
+      console.error("Failed to load orphanage data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [id]);
+
+
 
   return (
     <div className={styles.orphanageProfile}>
@@ -13,13 +41,13 @@ const OrphanageProfile: React.FC = () => {
 
       {/* Banner Section */}
       <section className={styles.banner}>
+        
         <img
-          src="https://thumbs.dreamstime.com/b/indian-children-13778293.jpg"
-          alt="Orphanage group photo"
-          className={styles.bannerImage}
-        />
+            src={orphanage?.banner_image || "https://thumbs.dreamstime.com/b/indian-children-13778293.jpg"}
+            className={styles.bannerImage}/>
+
         <div className={styles.bannerOverlay}>
-          <h1 className={styles.bannerTitle}>🌟 Abhayadhama Orphanage 🌟</h1>
+          <h1 className={styles.bannerTitle}>  🌟 {orphanage?.orphanage_name} 🌟</h1>
           <p className={styles.bannerSubtitle}>
             Together, let’s spread love, care, and opportunities 💖
           </p>
@@ -31,11 +59,11 @@ const OrphanageProfile: React.FC = () => {
         <section className={styles.infoSection}>
           <div className={styles.infoCard}>
             <div className={styles.infoContent}>
-              <h1>Abhayadhama</h1>
+              <h1>{orphanage?.orphanage_name}</h1>
               <div className={styles.contactInfo}>
                 <div className={styles.contactItem}>
                   <MapPin size={20} />
-                  <span>Whitefield Post, Bengaluru 560066</span>
+                  <span> {orphanage?.address}, {orphanage?.city} {orphanage?.pincode}</span>
                 </div>
                 <div className={styles.contactItem}>
                   <Phone size={20} />
@@ -43,7 +71,7 @@ const OrphanageProfile: React.FC = () => {
                 </div>
                 <div className={styles.contactItem}>
                   <Mail size={20} />
-                  <span>contact@abhayadhama.org</span>
+                  <span>{orphanage?.email}</span>
                 </div>
               </div>
             </div>
@@ -62,7 +90,7 @@ const OrphanageProfile: React.FC = () => {
                 <Users size={32} />
               </div>
               <div className={styles.statContent}>
-                <span className={styles.statNumber}>800+</span>
+                <span className={styles.statNumber}> {orphanage?.students_count}</span>
                 <span className={styles.statLabel}>Students</span>
               </div>
             </div>
@@ -72,7 +100,7 @@ const OrphanageProfile: React.FC = () => {
                 <User size={32} />
               </div>
               <div className={styles.statContent}>
-                <span className={styles.statNumber}>500+</span>
+                <span className={styles.statNumber}> {orphanage?.boys_count}</span>
                 <span className={styles.statLabel}>Male</span>
               </div>
             </div>
@@ -82,7 +110,7 @@ const OrphanageProfile: React.FC = () => {
                 <User size={32} />
               </div>
               <div className={styles.statContent}>
-                <span className={styles.statNumber}>300+</span>
+                <span className={styles.statNumber}>  {orphanage?.girls_count}</span>
                 <span className={styles.statLabel}>Female</span>
               </div>
             </div>
@@ -95,55 +123,17 @@ const OrphanageProfile: React.FC = () => {
             <h2>✨ Orphanage Needs ✨</h2>
 
             <div className={styles.needsGrid}>
-              <div className={styles.needsCategory}>
-                <h3>🍚 Basic Needs</h3>
-                <div className={styles.needsList}>
-                  <div className={styles.needItem}>
-                    <h4>Groceries</h4>
-                    <p>
-                      Rice, wheat, cooking oil, spices, and other essential food
-                      items.
-                    </p>
-                    
-                  </div>
-                  <div className={styles.needItem}>
-                    <h4>Bedding</h4>
-                    <p>
-                      Pillows, bedsheets, blankets, and mattresses for comfort.
-                    </p>
-                  </div>
-                  <div className={styles.needItem}>
-                    <h4>Food</h4>
-                    <p>
-                      Fresh fruits, vegetables, milk, eggs, and nutritious meals.
-                    </p>
-                  </div>
-                </div>
-              </div>
+  {requirements?.map((req) => (
+    <div key={req.id} className={styles.needItem}>
+      <h4>{req.item_name}</h4>
+      <p>{req.description}</p>
+      <small>
+        Needed: {req.quantity_needed}
+      </small>
+    </div>
+  ))}
+</div>
 
-              <div className={styles.needsCategory}>
-                <h3>📘 Educational Supplies</h3>
-                <div className={styles.needsList}>
-                  <div className={styles.needItem}>
-                    <h4>Stationery</h4>
-                    <p>
-                      Notebooks, pens, pencils, rulers, and other essentials.
-                    </p>
-                  </div>
-                  <div className={styles.needItem}>
-                    <h4>Books</h4>
-                    <p>Textbooks, story books, and learning materials.</p>
-                  </div>
-                  <div className={styles.needItem}>
-                    <h4>Others</h4>
-                    <p>
-                      Computers, tablets, and educational aids for better
-                      learning.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             <div className={styles.otherNeeds}>
               <h3>💡 Other Needs</h3>

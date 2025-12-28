@@ -5,6 +5,7 @@ from .views import (
     OrphanageRequirementUpdateView,
     OrphanageRequirementDeleteView,
     PublicRequirementListView,
+    OrphanageRequirementByOrphanageView
 )
 
 urlpatterns = [
@@ -13,4 +14,7 @@ urlpatterns = [
     path("<int:pk>/update/", OrphanageRequirementUpdateView.as_view(), name="requirement-update"),
     path("<int:pk>/delete/", OrphanageRequirementDeleteView.as_view(), name="requirement-delete"),
     path("public/", PublicRequirementListView.as_view(), name="requirement-public"),
+    path("orphanage/<int:orphanage_id>/",OrphanageRequirementByOrphanageView.as_view(),name="requirement-by-orphanage",
+)
+
 ]

@@ -7,7 +7,7 @@ export const updateDonationStatus = async (
   try {
     const token = localStorage.getItem("sessionToken");
 
-    const res = await fetch(`http://localhost:8000/api/donation/${id}/update-status/`, {
+    const res = await fetch(`http://172.16.31.165:8000/api/donation/${id}/update-status/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export const getMyDonationRequests = async () => {
 
     
     const token = localStorage.getItem("sessionToken");
-    const res = await fetch("http://localhost:8000/api/donation/received/", {
+    const res = await fetch("http://172.16.31.165:8000/api/donation/received/", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export const requirementService = {
     try {
       const token = localStorage.getItem("sessionToken");
 
-      const res = await fetch("http://localhost:8000/api/requirement/create/", {
+      const res = await fetch("http://172.16.31.165:8000/api/requirement/create/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -26,6 +26,8 @@ import AddRequirement from './pages/AddRequirement';
 import RoadmapPage from './pages/RoadmapPage';
 import LearningDashboard from './pages/LearningDashboard';
 import LibraryPage from "./pages/LibraryPage";
+import Learn from './pages/Learn';
+import WatchVideo from './pages/WatchVideo';
 
 // Protected route that reads from UserContext
 function ProtectedOrphanageRoute({ children }: { children: JSX.Element }) {
@@ -74,9 +76,12 @@ function App() {
             <Route path="/add-requirement/:category" element={<AddRequirement />} />
 
             {/* Learning pages */}
-            <Route path="/learn" element={<RoadmapPage />} />
+            <Route path="/LearnQuiz" element={<RoadmapPage />} />
             <Route path="/learn/dashboard" element={<LearningDashboard />} />
             <Route path="/library" element={<LibraryPage />} />
+
+            <Route path="/learn" element={<Learn />} />
+            <Route path="/learn/watch/:videoId" element={<WatchVideo />} />
 
           </Routes>
         </div>
