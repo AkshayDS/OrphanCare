@@ -126,7 +126,7 @@ class ProfileService {
       formData.append('established_on', profileData.established_on);
     }
     if (profileData.registration_number) {
-      formData.append('registration_number', profileData.registration_number);
+      formData.append('registration_no', profileData.registration_number);
     }
     
     // Bank details

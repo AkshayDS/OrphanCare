@@ -50,7 +50,7 @@ const OrphanageDashboard: React.FC = () => {
       } else {
         console.error("Failed to fetch profile");
         // authService.logout()
-        // navigate('/')
+        navigate('/orphanage/profile-complete')
       }
 
       setLoading(false);

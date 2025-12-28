@@ -73,7 +73,8 @@ async register(data: RegisterData): Promise<{ success: boolean; message: string;
     const result = await response.json();
 
     if (!response.ok) {
-      return { success: false, message: result.error || 'Registration failed' };
+      console.log("-------->",JSON.stringify(result))
+      return { success: false, message: JSON.stringify(result) || 'Registration failed' };
     }
 
     // persist registered account id for onboarding flow BEFORE returning
@@ -110,7 +111,7 @@ async register(data: RegisterData): Promise<{ success: boolean; message: string;
       const result = await response.json();
 
       if (!response.ok) {
-        return { success: false, message: result.error || 'Verification failed' };
+        return { success: false, message: JSON.stringify(result) };
       }
 
       return { 

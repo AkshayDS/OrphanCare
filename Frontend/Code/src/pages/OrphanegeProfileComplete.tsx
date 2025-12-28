@@ -121,6 +121,8 @@ const OrphanegeProfileComplete: React.FC = () => {
     const maleCount = parseInt(formData.male);
     const femaleCount = parseInt(formData.female);
 
+    console.log("before",formData.male,"after",maleCount)
+
     if (isNaN(maleCount) || isNaN(femaleCount) || maleCount < 0 || femaleCount < 0) {
       setError('Please enter valid numbers for orphan counts');
       return;
@@ -145,9 +147,9 @@ const OrphanegeProfileComplete: React.FC = () => {
         phone_number: formData.contactNumber,
         email: formData.email,
         total_orphans: maleCount + femaleCount,
-        boys_count: formData.male,
-        girls_count: formData.female,
-        students_count: maleCount + femaleCount, // Assuming all orphans are students
+        boys_count: maleCount,
+        girls_count: femaleCount,
+        students_count: maleCount + femaleCount, 
         description: `Orphanage established in ${formData.established || 'N/A'}. Registration Number: ${formData.registrationNumber || 'N/A'}`,
         established_on: formData.established ? new Date(formData.established).toISOString().split("T")[0]: new Date(),
         registration_number: formData.registrationNumber || undefined,

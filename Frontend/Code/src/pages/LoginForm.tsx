@@ -38,6 +38,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
 
       if (result.success && result.user) {
         // If returned user role doesn't match the login page, show message and stop
+
+        console.log("login result1 ",result)
         if (result.user.role !== role) {
           alert(`This account is registered as a ${result.user.role}. Please use the correct login page.`);
           setIsLoading(false);
@@ -48,9 +50,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         try {
           if (result.user.role === 'donor') {
             localStorage.setItem('userType', 'donor');
+            // localStorage.setItem('sessionToken',token)
           } else if (result.user.role === 'orphanage') {
             localStorage.setItem('userType', 'orphanage');
           }
+          console.log('login result',result)
         } catch (err) {
           console.warn('Unable to write userType to localStorage', err);
         }
