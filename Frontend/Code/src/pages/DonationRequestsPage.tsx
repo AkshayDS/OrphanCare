@@ -69,85 +69,106 @@ const handleReject = async (id: string) => {
   };
 
   const renderRequests = (list: DonationRequest[]) => {
-    return list.map((request) => (
-      <div key={request.id} className={styles.requestCard}>
-        <div className={styles.requestHeader} onClick={() => toggleExpand(request.id)}>
-          <div className={styles.requestInfo}>
-            <div className={styles.donorAvatar}>
-              <User size={24} />
-            </div>
-            <div className={styles.requestDetails}>
-              <h4>{request.donor_name}</h4>
-              <span className={`${styles.categoryBadge}`}>
-                {request.category}
-              </span>
-            </div>
+  console.log("--------------->", list);
+
+  return list?.map((request) => (
+    <div key={request.id} className={styles.requestCard}>
+      <div
+        className={styles.requestHeader}
+        onClick={() => toggleExpand(request.id)}
+      >
+        <div className={styles.requestInfo}>
+          <div className={styles.donorAvatar}>
+            <User size={24} />
           </div>
 
-          <div className={styles.requestActions}>
-            {request.status === 'pending' ? (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleApprove(request.id);
-                  }}
-                  className={`${styles.actionBtn} ${styles.approveBtn}`}
-                >
-                  <Check size={16} />
-                </button>
+          <div className={styles.requestDetails}>
+            <h4>{request.donor_name}</h4>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleReject(request.id);
-                  }}
-                  className={`${styles.actionBtn} ${styles.rejectBtn}`}
-                >
-                  <X size={16} />
-                </button>
-              </>
-            ) : (
-              <button className={`${styles.actionBtn} ${styles.completedBtn}`}>
-                <Check size={16} />
-              </button>
-            )}
-
-            <button className={styles.expandBtn}>
-              {expandedRequest === request.id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </button>
+            <span className={styles.categoryBadge}>
+              {request.item_name}
+            </span>
           </div>
         </div>
 
-        {expandedRequest === request.id && (
-          <div className={styles.requestExpanded}>
-            <div className={styles.donorDetails}>
-              <h5>Donor Details</h5>
-              <div className={styles.contactInfo}>
-                <div className={styles.contactItem}>
-                  <Phone size={14} />
-                  <span>{request.phone}</span>
-                </div>
-                <div className={styles.contactItem}>
-                  <Mail size={14} />
-                  <span>{request.email}</span>
-                </div>
+        <div className={styles.requestActions}>
+          {request.status === "pending" ? (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleApprove(request.id);
+                }}
+                className={`${styles.actionBtn} ${styles.approveBtn}`}
+              >
+                <Check size={16} />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReject(request.id);
+                }}
+                className={`${styles.actionBtn} ${styles.rejectBtn}`}
+              >
+                <X size={16} />
+              </button>
+            </>
+          ) : (
+            <button className={`${styles.actionBtn} ${styles.completedBtn}`}>
+              <Check size={16} />
+            </button>
+          )}
+
+          <button className={styles.expandBtn}>
+            {expandedRequest === request.id ? (
+              <ChevronUp size={16} />
+            ) : (
+              <ChevronDown size={16} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {expandedRequest === request.id && (
+        <div className={styles.requestExpanded}>
+          {/* Donor Details */}
+          <div className={styles.donorDetails}>
+            <h5>Donor Details</h5>
+
+            <div className={styles.contactInfo}>
+              <div className={styles.contactItem}>
+                <Phone size={14} />
+                <span>{request.phone ?? "N/A"}</span>
+              </div>
+
+              <div className={styles.contactItem}>
+                <Mail size={14} />
+                <span>{request.email ?? "N/A"}</span>
               </div>
             </div>
-
-            <div className={styles.donationDetails}>
-              <h5>Donation Details</h5>
-              <ul className={styles.itemsList}>
-                {request.items.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </div>
           </div>
-        )}
-      </div>
-    ));
-  };
+
+          {/* Donation Details */}
+          <div className={styles.donationDetails}>
+            <h5>Donation Details</h5>
+
+            <ul className={styles.itemsList}>
+              <li>
+                {request.item_name} — <strong>{request.quantity}</strong>
+              </li>
+            </ul>
+
+            {request.description && (
+              <p className={styles.description}>{request.description}</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  ));
+};
+
 
   return (
     <div className={styles.donationRequestsPage}>

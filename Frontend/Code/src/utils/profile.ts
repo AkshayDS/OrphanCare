@@ -104,10 +104,10 @@ class ProfileService {
     formData.append('address', profileData.address);
     formData.append('phone_number', profileData.phone_number);
     formData.append('email', profileData.email);
-    formData.append('no_of_orphans', profileData.total_orphans.toString());
-    formData.append('boy_count', profileData.boys_count.toString());
-    formData.append('girl_count', profileData.girls_count.toString());
-    formData.append('student_count', profileData.students_count.toString());
+    formData.append('total_orphans', profileData.total_orphans.toString());
+    formData.append('boys_count', profileData.boys_count.toString());
+    formData.append('girls_count', profileData.girls_count.toString());
+    formData.append('students_count', profileData.students_count.toString());
     formData.append('description', profileData.description);
     
     // Optional location fields

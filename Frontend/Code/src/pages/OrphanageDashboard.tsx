@@ -49,8 +49,8 @@ const OrphanageDashboard: React.FC = () => {
         setProfile(response.data);
       } else {
         console.error("Failed to fetch profile");
-        authService.logout()
-        navigate('/')
+        // authService.logout()
+        // navigate('/')
       }
 
       setLoading(false);

@@ -38,6 +38,7 @@ ALLOWED_HOSTS = ['orphancare-backend.onrender.com','127.0.0.1', 'localhost']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,7 +53,6 @@ INSTALLED_APPS = [
     "orphanage",
     "donation",
     "requirement",
-    "psycopg"
 ]
 
 MIDDLEWARE = [
@@ -180,3 +180,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "dsakshay128@gmail.com"       
 EMAIL_HOST_PASSWORD = "xqpb liwc kbyg nqex"    
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+
+ 

@@ -9,6 +9,7 @@ class OrphanageRequirement(models.Model):
         ("education", "Education"),
         ("medical", "Medical"),
         ("others", "Others"),
+        ("stationary","Stationary")
     ]
 
     orphanage = models.ForeignKey(

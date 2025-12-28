@@ -116,7 +116,8 @@ const OrphanegeProfileComplete: React.FC = () => {
       setError('Please enter the number of male and female orphans');
       return;
     }
-
+    
+    console.log(formData.female,"<------------------------")
     const maleCount = parseInt(formData.male);
     const femaleCount = parseInt(formData.female);
 
@@ -144,8 +145,8 @@ const OrphanegeProfileComplete: React.FC = () => {
         phone_number: formData.contactNumber,
         email: formData.email,
         total_orphans: maleCount + femaleCount,
-        boys_count: maleCount,
-        girls_count: femaleCount,
+        boys_count: formData.male,
+        girls_count: formData.female,
         students_count: maleCount + femaleCount, // Assuming all orphans are students
         description: `Orphanage established in ${formData.established || 'N/A'}. Registration Number: ${formData.registrationNumber || 'N/A'}`,
         established_on: formData.established ? new Date(formData.established).toISOString().split("T")[0]: new Date(),
