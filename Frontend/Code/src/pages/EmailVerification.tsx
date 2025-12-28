@@ -54,7 +54,8 @@ const EmailVerification: React.FC = () => {
       code : verificationCode
     }).then(result => {
       if (result.success) {
-        if (role === 'Donor') {
+        console.log("role--->",role)
+        if (role === 'donor') {
           navigate('/donor/profile-complete');
         } else {
           navigate('/orphanage/profile-complete');

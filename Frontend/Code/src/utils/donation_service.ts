@@ -2,6 +2,9 @@ import { apiClient } from "../utils/api";
 
 export const updateDonationStatus = async (
   id: string,
+  donor,
+  orphanage,
+  item_name,
   status: "accepted" | "cancelled"
 ) => {
   try {
@@ -14,15 +17,15 @@ export const updateDonationStatus = async (
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({
-        donor: 1,
-        orphanage: 4,
-        item_name: "asdf",
+        donor: donor,
+        orphanage: orphanage,
+        item_name: item_name,
         status: status
       })
     });
 
     const data = await res.json();
-
+    console.log("status update->>>",data)
     return {
       success: res.ok,
       data

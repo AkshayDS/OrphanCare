@@ -13,7 +13,7 @@ interface DonationRequest {
   id: string;
   donor_name: string;
   category: string;
-  status: 'pending' | 'completed';
+  status: 'pending' | 'accepted';
   phone: string;
   email: string;
   items: string[];
@@ -42,10 +42,12 @@ const DonationRequestsPage: React.FC = () => {
   };
 
   const pendingRequests = requests.filter(r => r.status === "pending");
-  const completedRequests = requests.filter(r => r.status === "completed");
+  const completedRequests = requests.filter(r => r.status === "accepted");
 
-const handleApprove = async (id: string) => {
-  const res = await updateDonationStatus(id, "accepted");
+  console.log("all",requests,"pending->",pendingRequests,"completed->",completedRequests)
+
+const handleApprove = async (id: string,donor:number,orphanage:number,item_name:string) => {
+  const res = await updateDonationStatus(id,donor,orphanage,item_name, "accepted");
 
   if (res.success) {
     fetchRequests();
@@ -54,8 +56,8 @@ const handleApprove = async (id: string) => {
   }
 };
 
-const handleReject = async (id: string) => {
-  const res = await updateDonationStatus(id, "cancelled");
+const handleReject = async (id: string,donor:number,orphanage:number,item_name:string) => {
+  const res = await updateDonationStatus(id,donor,orphanage,item_name, "cancelled");
 
   if (res.success) {
     fetchRequests();
@@ -70,9 +72,11 @@ const handleReject = async (id: string) => {
 
   const renderRequests = (list: DonationRequest[]) => {
   console.log("--------------->", list);
+  console.log("orph",list[0].orphanage)
 
   return list?.map((request) => (
     <div key={request.id} className={styles.requestCard}>
+      
       <div
         className={styles.requestHeader}
         onClick={() => toggleExpand(request.id)}
@@ -97,7 +101,7 @@ const handleReject = async (id: string) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleApprove(request.id);
+                  handleApprove(request.id,request.donor_name,request.orphanage,request.item_name);
                 }}
                 className={`${styles.actionBtn} ${styles.approveBtn}`}
               >
@@ -107,7 +111,7 @@ const handleReject = async (id: string) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleReject(request.id);
+                  handleReject(request.id,request.donor_name,request.orphanage,request.item_name);
                 }}
                 className={`${styles.actionBtn} ${styles.rejectBtn}`}
               >
@@ -139,12 +143,12 @@ const handleReject = async (id: string) => {
             <div className={styles.contactInfo}>
               <div className={styles.contactItem}>
                 <Phone size={14} />
-                <span>{request.phone ?? "N/A"}</span>
+                <span>{request.donor_phone ?? "N/A"}</span>
               </div>
 
               <div className={styles.contactItem}>
                 <Mail size={14} />
-                <span>{request.email ?? "N/A"}</span>
+                <span>{request.donor_email ?? "N/A"}</span>
               </div>
             </div>
           </div>

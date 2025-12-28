@@ -1,10 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Phone, Edit, Heart, Calendar, User, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import styles from '../styles/DonorDashboard.module.css';
+import axios from "axios";
 
 const DonorDashboard: React.FC = () => {
+
+  const api = axios.create({
+  baseURL: "http://172.16.31.165:8000/api",
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("sessionToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+  const [profile, setProfile] = useState<any>(null);
+const [donations, setDonations] = useState<any[]>([]);
+const [orphanages, setOrphanages] = useState<any[]>([]);
+
+
+
+  const navigate = useNavigate()
   const handleEditProfile = () => {
     // Navigate to profile edit
   };
@@ -17,14 +38,48 @@ const DonorDashboard: React.FC = () => {
     // Logout functionality
   };
 
+  useEffect(() => {
+  const token = localStorage.getItem("sessionToken");
+  console.log("token from stored",token)
+  if (!token) {
+    alert("Session expired! Please login");
+    navigate("/login");
+    return;
+  }
+
+  Promise.all([
+    api.get("/donor/me"),
+    api.get("/donation/my-donations/"),
+    api.get("/orphanage/list"),
+  ])
+    .then(([profileRes, donationRes, orphanageRes]) => {
+      setProfile(profileRes.data);
+      setDonations(donationRes.data);
+
+      // nearby orphanages (frontend limit)
+      const nearby = orphanageRes.data.filter(
+        (o: any) => o.pincode === profileRes.data.pincode
+      );
+      setOrphanages(nearby.slice(0, 2));
+    })
+    .catch(() => {
+      alert("Failed to load dashboard");
+    });
+}, []);
+
+
+  const pendingDonations = donations.filter(
+  (d) => d.status === "pending"
+);
+
   return (
     <div className={styles.donorDashboard}>
       <Header userType="donor" /><br></br>
-      <h2>Welcome back, <span className={styles.spann}>Akshay D S</span> 👋</h2>
+      <h2>Welcome back, <span className={styles.spann}>{profile?.full_name}</span> 👋</h2>
       <p>We’re glad to see you again! Here’s your profile overview.</p>
       
       {/* Hero Section */}
-      
+
 
       <div className={styles.container}>
         {/* Profile Section */}
@@ -35,15 +90,15 @@ const DonorDashboard: React.FC = () => {
                 <User size={40} />
               </div>
               <div className={styles.profileDetails}>
-                <h2>Akshay D S</h2>
+                <h2>{profile?.full_name} </h2>
                 <div className={styles.profileMeta}>
                   <div className={styles.metaItem}>
                     <MapPin size={16} />
-                    <span>Bangalore, Karnataka</span>
+                    <span>{profile?.city}, {profile?.state}</span>
                   </div>
                   <div className={styles.metaItem}>
                     <Phone size={16} />
-                    <span>+91 9876543210</span>
+                    <span>+91 {profile?.contact_number}</span>
                   </div>
                 </div>
               </div>
@@ -59,27 +114,17 @@ const DonorDashboard: React.FC = () => {
         <section className={styles.donations}>
           <h2 className={styles.sectionTitle}>Your Donations</h2><br></br>
           <div className={styles.donationsScroll}>
-            <div className={styles.donationCard}>
-              <div className={styles.donationStats}>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>5</span>
-                  <span className={styles.statLabel}>Books</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>3</span>
-                  <span className={styles.statLabel}>Clothes</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>₹2000</span>
-                  <span className={styles.statLabel}>Fund</span>
-                </div>
-              </div>
-              <h4>Abhayadhama Orphanage</h4>
-              <div className={styles.donationMeta}>
-                <Calendar size={14} />
-                <span>15 Dec 2024</span>
-              </div>
-            </div>
+            {donations.map((d) => (
+    <div key={d.id} className={styles.donationCard}>
+      <h4>{d.orphanage_name}</h4>
+      <p>{d.item_name} — {d.quantity}</p>
+      <div className={styles.donationMeta}>
+        <Calendar size={14} />
+        <span>{new Date(d.donation_date).toDateString()}</span>
+      </div>
+      <span className={styles.pendingStatus}>{d.status}</span>
+    </div>
+  ))}
             
             <div className={styles.donationCard}>
               <div className={styles.donationStats}>
@@ -110,74 +155,31 @@ const DonorDashboard: React.FC = () => {
         <section className={styles.orphanages}>
           <h2 className={styles.sectionTitle}>Orphanages near me</h2><br></br>
           <div className={styles.orphanagesGrid}>
-            <div className={styles.orphanageCard}>
-              <h4>Abhayadhama</h4>
-              <p className={styles.orphanageDesc}>
-                Providing care and education to underprivileged children since 1995.
-              </p>
-              <div className={styles.orphanageContact}>
-                <div className={styles.contactItem}>
-                  <MapPin size={14} />
-                  <span>Whitefield Post, Bengaluru 560066</span>
-                </div>
-                <div className={styles.contactItem}>
-                  <Phone size={14} />
-                  <span>+91 9876543210</span>
-                </div>
-              </div>
-              
-              <div className={styles.currentNeeds}>
-                <h5>Current Needs</h5>
-                <div className={styles.needsTags}>
-                  <span className={styles.tag}>Food</span>
-                  <span className={styles.tag}>Clothes</span>
-                  <span className={styles.tag}>Groceries</span>
-                  <span className={styles.tag}>Funds</span>
-                </div>
-              </div>
-              
-              <Link 
-                to="/orphanage/1" 
-                className={`${styles.btn} ${styles.btnDonate}`}
-              >
-                Donate Now
-                <ChevronRight size={1} />
-              </Link>
-            </div>
-            
-            <div className={styles.orphanageCard}>
-              <h4>Hope Children Home</h4>
-              <p className={styles.orphanageDesc}>
-                A safe haven for children providing love, care, and quality education.
-              </p>
-              <div className={styles.orphanageContact}>
-                <div className={styles.contactItem}>
-                  <MapPin size={14} />
-                  <span>Koramangala, Bengaluru 560034</span>
-                </div>
-                <div className={styles.contactItem}>
-                  <Phone size={14} />
-                  <span>+91 8765432109</span>
-                </div>
-              </div>
-              
-              <div className={styles.currentNeeds}>
-                <h5>Current Needs</h5>
-                <div className={styles.needsTags}>
-                  <span className={styles.tag}>Books</span>
-                  <span className={styles.tag}>Stationery</span>
-                  <span className={styles.tag}>Bedding</span>
-                </div>
-              </div>
-              
-              <Link 
-                to="/orphanage/2" 
-                className={`${styles.btn} ${styles.btnDonate}`}
-              >
-                Donate Now
-                <ChevronRight size={1} />
-              </Link>
-            </div>
+            {orphanages.map((o) => (
+    <div key={o.id} className={styles.orphanageCard}>
+      <h4>{o.orphanage_name}</h4>
+      <p className={styles.orphanageDesc}>{o.description}</p>
+
+      <div className={styles.orphanageContact}>
+        <div className={styles.contactItem}>
+          <MapPin size={14} />
+          <span>{o.address}</span>
+        </div>
+        <div className={styles.contactItem}>
+          <Phone size={14} />
+          <span>{o.phone_number}</span>
+        </div>
+      </div>
+
+      <Link
+        to={`/orphanage/${o.id}`}
+        className={`${styles.btn} ${styles.btnDonate}`}
+      >
+        Donate Now <ChevronRight size={14} />
+      </Link>
+    </div>
+  ))}
+
           </div>
           <Link to="/orphanages" className={styles.viewmore}>
           <button className={styles.btnViewMore}>
@@ -192,20 +194,17 @@ const DonorDashboard: React.FC = () => {
         <section className={styles.pendingDonations}>
           <h2 className={styles.sectionTitle}>Pending Donations</h2>
           <div className={styles.pendingList}>
-            <div className={styles.pendingCard}>
-              <div className={styles.pendingInfo}>
-                <h4>Abhayadhama</h4>
-                <span className={styles.pendingStatus}>Pending</span>
-                <p className={styles.requestedItem}>Food</p>
-              </div>
-            </div>
-            <div className={styles.pendingCard}>
-              <div className={styles.pendingInfo}>
-                <h4>Hope Children Home</h4>
-                <span className={styles.pendingStatus}>Pending</span>
-                <p className={styles.requestedItem}>Clothes & Groceries</p>
-              </div>
-            </div>
+            {pendingDonations.map((d) => (
+    <div key={d.id} className={styles.pendingCard}>
+      <div className={styles.pendingInfo}>
+        <h4>{d.orphanage_name}</h4>
+        <span className={styles.pendingStatus}>Pending</span>
+        <p className={styles.requestedItem}>
+          {d.item_name}
+        </p>
+      </div>
+    </div>
+  ))}
           </div>
           <p className={styles.pendingMessage}>
             ⚠️ Your donation is still pending – please complete it as soon as possible
