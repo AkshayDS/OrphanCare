@@ -1,20 +1,23 @@
 // src/components/Header.tsx
-import React, { useState, useMemo, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut } from 'lucide-react';
-import LogoutModal from './LogoutModal';
-import styles from '../styles/Header.module.css';
+import React, { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Menu, X, LogOut } from "lucide-react";
+import LogoutModal from "./LogoutModal";
+import styles from "../styles/Header.module.css";
+import { HashLink } from "react-router-hash-link";
 // import logo from '../assets/logooo.jpg';
 
 interface HeaderProps {
-  userType?: 'donor' | 'orphanage' | null;
+  userType?: "donor" | "orphanage" | null;
   userName?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [localUserType, setLocalUserType] = useState<'donor' | 'orphanage' | null>(null);
+  const [localUserType, setLocalUserType] = useState<
+    "donor" | "orphanage" | null
+  >(null);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,8 +26,8 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
   useEffect(() => {
     const readStoredType = () => {
       try {
-        const stored = localStorage.getItem('userType');
-        if (stored === 'donor' || stored === 'orphanage') {
+        const stored = localStorage.getItem("userType");
+        if (stored === "donor" || stored === "orphanage") {
           setLocalUserType(stored);
         } else {
           setLocalUserType(null);
@@ -35,10 +38,10 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
     };
 
     readStoredType();
-    window.addEventListener('storage', readStoredType);
+    window.addEventListener("storage", readStoredType);
 
     return () => {
-      window.removeEventListener('storage', readStoredType);
+      window.removeEventListener("storage", readStoredType);
     };
   }, []);
 
@@ -50,34 +53,40 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
   const handleLogout = () => {
     setShowLogoutModal(false);
     try {
-      localStorage.removeItem('userType');
+      localStorage.removeItem("userType");
     } catch (e) {
-      console.warn('Error clearing userType', e);
+      console.warn("Error clearing userType", e);
     }
-    navigate('/');
+    navigate("/");
   };
 
   const isActive = (path: string) => location.pathname === path;
 
   const renderAuthLinks = () => {
-    if (effectiveUserType === 'donor') {
+    if (effectiveUserType === "donor") {
       return (
         <>
           <Link
             to="/donor/dashboard"
-            className={`${styles.navLink} ${isActive('/donor/dashboard') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/donor/dashboard") ? styles.active : ""
+            }`}
           >
             Home
           </Link>
           <Link
             to="/donor/profile-complete"
-            className={`${styles.navLink} ${isActive('/donor/profile-complete') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/donor/profile-complete") ? styles.active : ""
+            }`}
           >
             Profile
           </Link>
           <Link
             to="/orphanages"
-            className={`${styles.navLink} ${isActive('/orphanages') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/orphanages") ? styles.active : ""
+            }`}
           >
             Orphanages
           </Link>
@@ -92,46 +101,55 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
       );
     }
 
-    if (effectiveUserType === 'orphanage') {
+    if (effectiveUserType === "orphanage") {
       return (
         <>
           <Link
             to="/orphanage/dashboard"
-            className={`${styles.navLink} ${isActive('/orphanage/dashboard') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/orphanage/dashboard") ? styles.active : ""
+            }`}
           >
             Home
           </Link>
           <Link
             to="/orphanage/profile-complete"
-            className={`${styles.navLink} ${isActive('/orphanage/profile-complete') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/orphanage/profile-complete") ? styles.active : ""
+            }`}
           >
             Profile
           </Link>
           <Link
             to="/orphanage/requests"
-            className={`${styles.navLink} ${isActive('/orphanage/requests') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/orphanage/requests") ? styles.active : ""
+            }`}
           >
             Requests
           </Link>
           {/* Orphanage-only links */}
           <Link
             to="/learn"
-            className={`${styles.navLink} ${isActive('/learn') ? styles.active : ''}`}
+            className={`${styles.navLink} ${
+              isActive("/learn") ? styles.active : ""
+            }`}
           >
             Learn
           </Link>
 
-           <Link
+          <Link
             to="/LearnQuiz"
-            className={`${styles.navLink} ${isActive('/LearnQuiz') ? styles.active : ''}`}
-          >
-            
-          </Link>
+            className={`${styles.navLink} ${
+              isActive("/LearnQuiz") ? styles.active : ""
+            }`}
+          ></Link>
           <Link
             to="/learn/dashboard"
-            className={`${styles.navLink} ${isActive('/learn/dashboard') ? styles.active : ''}`}
-          >
-          </Link>
+            className={`${styles.navLink} ${
+              isActive("/learn/dashboard") ? styles.active : ""
+            }`}
+          ></Link>
           <button
             onClick={() => setShowLogoutModal(true)}
             className={styles.logoutBtn}
@@ -146,13 +164,25 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
     // Public / not logged in
     return (
       <>
-        <Link to="/" className={`${styles.navLink} ${isActive('/') ? styles.active : ''}`}>
+        <Link
+          to="/"
+          className={`${styles.navLink} ${isActive("/") ? styles.active : ""}`}
+        >
           Home
         </Link>
-        <Link to="/#about" className={styles.navLink}>About</Link>
-        <Link to="/#contact" className={styles.navLink}>Contact</Link>
-        <Link to="/register" className={styles.navLink}>Register</Link>
-        <Link to="/login" className={`${styles.navLink} ${styles.loginBtn}`}>Log In</Link>
+        <HashLink to="/#about" smooth className={styles.navLink}>
+          About
+        </HashLink>
+
+        <HashLink to="/#about" smooth className={styles.navLink}>
+          Contact
+        </HashLink>
+        <Link to="/register" className={styles.navLink}>
+          Register
+        </Link>
+        <Link to="/login" className={`${styles.navLink} ${styles.loginBtn}`}>
+          Log In
+        </Link>
       </>
     );
   };
@@ -170,15 +200,13 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
           </div> */}
 
           {/* Desktop Navigation */}
-          <nav className={styles.nav}>
-            {renderAuthLinks()}
-          </nav>
+          <nav className={styles.nav}>{renderAuthLinks()}</nav>
 
           {/* Mobile Menu Button */}
           <button
             className={styles.menuButton}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -186,9 +214,7 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className={styles.mobileNav}>
-            {renderAuthLinks()}
-          </nav>
+          <nav className={styles.mobileNav}>{renderAuthLinks()}</nav>
         )}
       </header>
 
