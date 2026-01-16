@@ -15,7 +15,7 @@ const LoginChoice: React.FC = () => {
       >
         <div className={styles.card}>
           <div className={styles.logo}>
-            <span>OrphanCare Network</span>
+            <span>SafeDonate Network</span>
           </div>
           
           <div className={styles.choiceContainer}>
@@ -57,7 +57,7 @@ const LoginChoice: React.FC = () => {
           </div>
           
           <div className={styles.footer}>
-            <span>OrphanCare Network</span>
+            <span>SafeDonate Network</span>
           </div>
         </div>
       </motion.div>

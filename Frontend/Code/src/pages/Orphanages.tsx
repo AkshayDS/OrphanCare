@@ -50,7 +50,7 @@ const displayedOrphanages =
   useEffect(() => {
     const fetchOrphanages = async () => {
       try {
-        const response = await fetch("http://172.16.31.165:8000/api/orphanage/list/");
+        const response = await fetch("http://172.16.20.43:8000/api/orphanage/list/");
         const data = await response.json();
         setOrphanages(data);
       } catch (error) {
@@ -153,7 +153,7 @@ const displayedOrphanages =
       <footer className={styles.footer}>
         <div className={styles.container}>
           <div className={styles.footerContent}>
-            <span>🌟 OrphanCare Network © {new Date().getFullYear()} 🌟</span>
+            <span>🌟 SafeDonate Network © {new Date().getFullYear()} 🌟</span>
           </div>
         </div>
       </footer>

@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ userType, userName }) => {
           {/* Logo */}
           {/*
           <div className={styles.logo}>
-            <Link to="/" aria-label="OrphanCare Home">
+            <Link to="/" aria-label="SafeDonate Home">
               <img src={logo} alt="Orphan Care Network Logo" className={styles.logoImg} />
             </Link>
           </div> */}

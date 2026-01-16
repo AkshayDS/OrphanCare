@@ -99,7 +99,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
         <div className={styles.card}>
           <div className={styles.formSection}>
             <div className={styles.logo}>
-              <span>OrphanCare Network</span>
+              <span>SafeDonate Network</span>
             </div>
             
             <div className={styles.formContent}>
@@ -164,7 +164,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
                   <span>or</span>
                 </div>
                 
-                <button 
+                {/* <button 
                   type="button" 
                   className={`${styles.btn} ${styles.btnGoogle} ${styles.fullWidth}`}
                   onClick={handleGoogleLogin}
@@ -176,7 +176,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
                     <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                   </svg>
                   Log in with Google
-                </button>
+                </button> */}
               </form>
               
               <p className={styles.signupLink}>
@@ -194,7 +194,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ role }) => {
           </div>
           
           <div className={styles.footer}>
-            <span>OrphanCare Network</span>
+            <span>SafeDonate Network</span>
           </div>
         </div>
       </motion.div>

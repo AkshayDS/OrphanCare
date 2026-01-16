@@ -573,7 +573,7 @@ React.useEffect(() => {
           </form>
           
           <div className={styles.footer}>
-            <span>OrphanCare Network</span>
+            <span>SafeDonate Network</span>
           </div>
         </div>
       </motion.div>

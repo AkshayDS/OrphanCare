@@ -22,7 +22,7 @@ serve(async (req) => {
     const { email, verificationCode, role }: EmailRequest = await req.json();
 
     const emailTemplate = `
-      <h2>Welcome to OrphanCare Network!</h2>
+      <h2>Welcome to SafeDonate Network!</h2>
       <p>Thank you for registering as a ${role}. Please verify your email using the code below:</p>
       <h1 style="color:#800033;">${verificationCode}</h1>
       <p>This code expires in 10 minutes.</p>
@@ -34,9 +34,9 @@ serve(async (req) => {
       port: 465,
       username: "indusgaming0000@gmail.com", // Your Gmail
       password: "indus0000@gmail.com",    // 16-char App Password
-      from: "OrphanCare Network <indusgaming0000@gmail.com>",
+      from: "SafeDonate Network <indusgaming0000@gmail.com>",
       to: email,
-      subject: "Verify Your Email - OrphanCare Network",
+      subject: "Verify Your Email - SafeDonate Network",
       content: emailTemplate,
     });
 

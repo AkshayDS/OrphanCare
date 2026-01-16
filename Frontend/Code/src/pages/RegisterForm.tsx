@@ -4,6 +4,7 @@ import { Eye, EyeOff, Building, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 import { authService } from "../utils/auth";
 import styles from "../styles/RegisterForm.module.css";
+import image from "../Assets/image3.jpg"
 
 interface RegisterFormProps {
   role: "orphanage" | "donor";
@@ -94,7 +95,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {
         <div className={styles.card}>
           <div className={styles.formSection}>
             <div className={styles.logo}>
-              <span>OrphanCare Network</span>
+              <span>SafeDonate Network</span>
             </div>
 
             <div className={styles.formContent}>
@@ -180,7 +181,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {
                   {isLoading ? <span className="spinner"></span> : "Register"}
                 </button>
 
-                <button
+                {/* <button
                   type="button"
                   className={`${styles.btn} ${styles.btnGoogle} ${styles.fullWidth}`}
                   onClick={handleGoogleAuth}
@@ -204,7 +205,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {
                     />
                   </svg>
                   Register with Google
-                </button>
+                </button> */}
               </form>
 
               <p className={styles.loginLink}>
@@ -215,14 +216,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {
 
           <div className={styles.illustrationSection}>
             <img
-              src="https://sdmntpraustraliaeast.oaiusercontent.com/files/00000000-4f48-61fa-9cbb-bbc6636b006e/raw?se=2025-09-23T09%3A38%3A20Z&sp=r&sv=2024-08-04&sr=b&scid=279b6bd8-0a0a-5fa2-b8c5-4beaf4ccf288&skoid=1e4bb9ed-6bb5-424a-a3aa-79f21566e722&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-23T01%3A02%3A14Z&ske=2025-09-24T01%3A02%3A14Z&sks=b&skv=2024-08-04&sig=MM8uLmuWWvEXMwtknrzUDN1JMykuD9FNhaNdfhqy2bE%3D"
+              src={image}
               alt={`${role} registration illustration`}
               className={styles.illustration}
             />
           </div>
 
           <div className={styles.footer}>
-            <span>OrphanCare Network</span>
+            <span>SafeDonate Network</span>
           </div>
         </div>
       </motion.div>

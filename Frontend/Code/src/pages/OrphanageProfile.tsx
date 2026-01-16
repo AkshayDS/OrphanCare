@@ -14,8 +14,8 @@ const [loading, setLoading] = React.useState(true);
   const fetchData = async () => {
     try {
       const [profileRes, reqRes] = await Promise.all([
-        fetch(`http://172.16.31.165:8000/api/orphanage/${id}/`),
-        fetch(`http://172.16.31.165:8000/api/requirement/orphanage/${id}/`)
+        fetch(`http://172.16.20.43:8000/api/orphanage/${id}/`),
+        fetch(`http://172.16.20.43:8000/api/requirement/orphanage/${id}/`)
       ]);
 
       const profileData = await profileRes.json();
@@ -170,7 +170,7 @@ const [loading, setLoading] = React.useState(true);
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.container}>
-          <span>🌍 OrphanCare Network © {new Date().getFullYear()}</span>
+          <span>🌍 SafeDonate Network © {new Date().getFullYear()}</span>
         </div>
       </footer>
     </div>

@@ -31,7 +31,7 @@ const LandingPage: React.FC = () => {
               Hope <span className={styles.highlight}>begins here</span>
             </h1>
             <p className={styles.heroText}>
-              Welcome to OrphanCare Network.  
+              Welcome to SafeDonate Network.  
               You can be the reason a child smiles today.  
               Join our mission to bring hope and happiness to children in need.
             </p>
@@ -78,7 +78,7 @@ const LandingPage: React.FC = () => {
               whileHover={{ scale: 1.05 }}
             >
               <img
-                src="https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-d4cc-61f7-b320-b124690c1c18/raw?se=2025-09-23T09%3A38%3A20Z&sp=r&sv=2024-08-04&sr=b&scid=91e7adbb-9421-50ec-990b-82d9bc513f38&skoid=1e4bb9ed-6bb5-424a-a3aa-79f21566e722&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-22T20%3A51%3A59Z&ske=2025-09-23T20%3A51%3A59Z&sks=b&skv=2024-08-04&sig=6llAFdkucGCPPSHDDqNeWfNYSrJjarLCCKWKEH4ITD0%3D"
+                src="image.jpg"
                 alt="Children learning together"
                 loading="lazy"
               />
@@ -91,7 +91,7 @@ const LandingPage: React.FC = () => {
               whileHover={{ scale: 1.05 }}
             >
               <img
-                src="https://sdmntprnortheu.oaiusercontent.com/files/00000000-2340-61f4-b88b-cf41d82b51ed/raw?se=2025-09-23T09%3A38%3A20Z&sp=r&sv=2024-08-04&sr=b&scid=941c6b60-a7b1-54d1-b38c-4121024f880f&skoid=1e4bb9ed-6bb5-424a-a3aa-79f21566e722&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-23T01%3A48%3A09Z&ske=2025-09-24T01%3A48%3A09Z&sks=b&skv=2024-08-04&sig=J7jw3rr4yW5iOiY4T6AArfnqhxIfL6UcxgVRVpNER70%3D"
+                src="image1.jpg"
                 alt="Happy children playing"
                 loading="lazy"
               />
@@ -173,7 +173,7 @@ const LandingPage: React.FC = () => {
           >
             <h2 className={styles.sectionTitle}>About Us</h2>
             <p>
-              OrphanCare Network is a dedicated platform that bridges the gap between 
+              SafeDonate Network is a dedicated platform that bridges the gap between 
               generous donors and orphanages in need. We believe that every child deserves 
               love, care, and opportunity to thrive.
             </p>
@@ -191,8 +191,8 @@ const LandingPage: React.FC = () => {
         <div className={styles.container}>
           <div className={styles.footerContent}>
             <div className={styles.footerSection}>
-              <h3>OrphanCare Network</h3>
-              <p>OrphanCare Network is a Non-Profit Organization.</p>
+              <h3>SafeDonate Network</h3>
+              <p>SafeDonate Network is a Non-Profit Organization.</p>
             </div>
             <div className={styles.footerSection}>
               <h4>Contact Us</h4>
@@ -217,7 +217,7 @@ const LandingPage: React.FC = () => {
             </div>
           </div>
           <div className={styles.footerBottom}>
-            <p>&copy; 2025 OrphanCare Network. All rights reserved.</p>
+            <p>&copy; 2025 SafeDonate Network. All rights reserved.</p>
           </div>
         </div>
       </footer>

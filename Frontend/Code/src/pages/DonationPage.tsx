@@ -26,7 +26,7 @@ const DonationPage: React.FC = () => {
   // 🔹 Fetch requirements
   useEffect(() => {
 
-    fetch(`http://172.16.31.165:8000/api/requirement/orphanage/${orphanageId}`)
+    fetch(`http://172.16.20.43:8000/api/requirement/orphanage/${orphanageId}`)
       .then(res => res.json())
       .then(data => {
         const filtered = data.filter(
@@ -49,7 +49,7 @@ const DonationPage: React.FC = () => {
     const req = requirements.find(r => r.id === selectedRequirement);
 
     try {
-      const res = await fetch("http://172.16.31.165:8000/api/donation/create/", {
+      const res = await fetch("http://172.16.20.43:8000/api/donation/create/", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -127,7 +127,7 @@ const DonationPage: React.FC = () => {
       </div>
 
       <footer className={styles.footer}>
-        <span>OrphanCare Network</span>
+        <span>SafeDonate Network</span>
       </footer>
     </div>
   );

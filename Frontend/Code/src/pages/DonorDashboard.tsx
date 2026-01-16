@@ -8,7 +8,7 @@ import axios from "axios";
 const DonorDashboard: React.FC = () => {
 
   const api = axios.create({
-  baseURL: "http://172.16.31.165:8000/api",
+  baseURL: "http://172.16.20.43:8000/api",
 });
 
 api.interceptors.request.use((config) => {
@@ -216,7 +216,7 @@ const [orphanages, setOrphanages] = useState<any[]>([]);
           <div className={styles.aboutCard}>
             <h2 className={styles.sectionTitle}>About Us</h2>
             <p>
-              OrphanCare Network is a dedicated platform that bridges the gap between 
+              SafeDonate Network is a dedicated platform that bridges the gap between 
               generous donors and orphanages in need. We believe that every child deserves 
               love, care, and opportunity to thrive.
             </p>
@@ -228,7 +228,7 @@ const [orphanages, setOrphanages] = useState<any[]>([]);
       <footer className={styles.footer}>
         <div className={styles.container}>
           <div className={styles.footerContent}>
-            <span>OrphanCare Network © 2025</span>
+            <span>SafeDonate Network © 2025</span>
           </div>
         </div>
       </footer>

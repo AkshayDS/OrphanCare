@@ -65,7 +65,7 @@ const OrphanageDashboard: React.FC = () => {
     try {
       const token = localStorage.getItem("sessionToken");
 
-      const res = await fetch("http://172.16.31.165:8000/api/requirement/mine/", {
+      const res = await fetch("http://172.16.20.43:8000/api/requirement/mine/", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -288,7 +288,7 @@ const toggleCollapse = (category: string) => {
 
 
       <footer className={styles.footer}>
-        <p>OrphanCare Network © 2025</p>
+        <p>SafeDonate Network © 2025</p>
       </footer>
     </div>
   );

@@ -242,7 +242,7 @@ const handleReject = async (id: string,donor:number,orphanage:number,item_name:s
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.container}>
-          <span>OrphanCare Network</span>
+          <span>SafeDonate Network</span>
         </div>
       </footer>
     </div>
